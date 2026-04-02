@@ -1,0 +1,28 @@
+:root {
+    --kenda-ink: #1A1040;
+    --kenda-indigo: #2D1B69;
+    --kenda-purple: #4C2D99;
+    --kenda-violet: #6B46C1;
+    --kenda-lavender: #A78BFA;
+    --kenda-gold: #F59E0B;
+    --kenda-light: #F5F3FF;
+}
+
+body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--kenda-ink); }
+.navbar-kenda { background: var(--kenda-ink); border-bottom: 3px solid var(--kenda-gold); }
+.navbar-kenda .navbar-brand { color: white; font-weight: 700; }
+.navbar-kenda .nav-link { color: rgba(255,255,255,0.8); }
+.navbar-kenda .nav-link:hover { color: var(--kenda-gold); }
+.btn-kenda { background: var(--kenda-indigo); color: white; border-radius: 8px; border: none; }
+.btn-kenda:hover { background: var(--kenda-purple); color: white; }
+.kenda-card {
+    border: 1px solid var(--kenda-lavender);
+    border-radius: 12px; padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(45,27,105,0.08);
+    transition: box-shadow 0.2s;
+}
+.kenda-card:hover { box-shadow: 0 4px 24px rgba(45,27,105,0.16); }
+.sidebar { background: var(--kenda-ink); min-height:100vh; width: 240px; }
+.sidebar .nav-link { color: rgba(255,255,255,0.7); }
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active { color: white; background: rgba(245,158,11,0.15); }
