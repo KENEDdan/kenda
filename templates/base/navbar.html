@@ -1,20 +1,30 @@
 <nav class="navbar navbar-expand-lg navbar-kenda">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'public:home' %}">
+        <a class="navbar-brand" href="{% url 'public:home' %}">
             <span style="color:var(--kenda-gold);">kenda</span>
         </a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+            <span class="navbar-toggler-icon" style="filter:invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="/dashboard/">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'account_logout' %}">Logout</a>
+                    <a class="btn btn-outline-light btn-sm px-3" href="{% url 'account_logout' %}">Logout</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-kenda-gold btn-sm px-4" href="{% url 'account_signup' %}">Get Started</a>
                 </li>
                 {% endif %}
             </ul>

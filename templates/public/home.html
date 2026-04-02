@@ -1,13 +1,151 @@
 {% extends 'base/base.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}Welcome{% endblock %}
+
 {% block content %}
-<div class="container py-5 text-center">
-    <h1 class="display-4 fw-bold" style="color:var(--kenda-indigo);">
-        Welcome to <span style="color:var(--kenda-gold);">kenda</span>
-    </h1>
-    <p class="lead text-muted mt-3">
-        The Study Platform &mdash; Phase 1 scaffold is running.
-    </p>
-    <a href="/admin/" class="btn btn-kenda mt-4 px-5">Go to Admin Panel</a>
-</div>
+
+<!-- HERO -->
+<section class="kenda-hero">
+    <div class="container">
+        <div class="row align-items-center min-vh-80">
+            <div class="col-lg-6">
+                <span class="badge kenda-badge mb-3">Built for African Schools</span>
+                <h1 class="display-4 fw-bold text-white mb-4">
+                    Run Your School.<br>
+                    <span class="kenda-gold-text">Not Your Spreadsheets.</span>
+                </h1>
+                <p class="lead text-white-50 mb-5">
+                    Kenda is the all-in-one school management platform designed
+                    for African educational institutions — from primary schools
+                    to universities.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'account_signup' %}" class="btn btn-kenda-gold btn-lg px-5">
+                        Start Free Trial
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-5">
+                        See Features
+                    </a>
+                </div>
+                <p class="text-white-50 mt-3 small">
+                    <i class="bi bi-shield-check me-1"></i>
+                    No credit card required &mdash; 30-day free trial
+                </p>
+            </div>
+            <div class="col-lg-6 d-none d-lg-flex justify-content-center">
+                <div class="hero-illustration">
+                    <div class="hero-card-1 kenda-card-float">
+                        <i class="bi bi-people-fill"></i>
+                        <span>1,240 Students Enrolled</span>
+                    </div>
+                    <div class="hero-card-2 kenda-card-float">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>98% Attendance Rate</span>
+                    </div>
+                    <div class="hero-card-3 kenda-card-float">
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        <span>Fees Collected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SOCIAL PROOF STRIP -->
+<section class="kenda-strip py-3">
+    <div class="container">
+        <div class="row align-items-center text-center g-4">
+            <div class="col-6 col-md-3">
+                <div class="fw-bold fs-3" style="color:var(--kenda-gold);">50+</div>
+                <div class="text-muted small">Schools Onboarded</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fw-bold fs-3" style="color:var(--kenda-gold);">30K+</div>
+                <div class="text-muted small">Students Managed</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fw-bold fs-3" style="color:var(--kenda-gold);">8</div>
+                <div class="text-muted small">Countries</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="fw-bold fs-3" style="color:var(--kenda-gold);">99.9%</div>
+                <div class="text-muted small">Uptime SLA</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="py-6">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold" style="color:var(--kenda-indigo);">Everything your school needs</h2>
+            <p class="text-muted lead">One platform. Every module. Zero chaos.</p>
+        </div>
+        <div class="row g-4">
+            {% for feature in features %}
+            <div class="col-md-6 col-lg-4">
+                <div class="kenda-feature-card h-100">
+                    <div class="kenda-feature-icon">
+                        <i class="bi {{ feature.icon }}"></i>
+                    </div>
+                    <h5 class="fw-bold mt-3 mb-2">{{ feature.title }}</h5>
+                    <p class="text-muted mb-0">{{ feature.desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="py-6" style="background:var(--kenda-light);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold" style="color:var(--kenda-indigo);">Simple, transparent pricing</h2>
+            <p class="text-muted lead">No hidden fees. Cancel any time.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            {% for plan in plans %}
+            <div class="col-md-6 col-lg-4">
+                <div class="kenda-price-card h-100 {% if plan.highlighted %}kenda-price-highlighted{% endif %}">
+                    {% if plan.highlighted %}
+                    <div class="kenda-popular-badge">Most Popular</div>
+                    {% endif %}
+                    <h4 class="fw-bold mb-1">{{ plan.name }}</h4>
+                    <p class="text-muted small mb-3">{{ plan.desc }}</p>
+                    <div class="kenda-price mb-4">
+                        <span class="fs-1 fw-bold">{{ plan.price }}</span>
+                        <span class="text-muted">{{ plan.period }}</span>
+                    </div>
+                    <ul class="list-unstyled mb-4">
+                        {% for f in plan.features %}
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill me-2" style="color:var(--kenda-gold);"></i>
+                            {{ f }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{% url 'account_signup' %}"
+                       class="btn w-100 {% if plan.highlighted %}btn-kenda-gold{% else %}btn-kenda{% endif %}">
+                        {{ plan.cta }}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="kenda-cta-banner py-6">
+    <div class="container text-center">
+        <h2 class="fw-bold text-white mb-3">Ready to transform your school?</h2>
+        <p class="text-white-50 lead mb-4">Join hundreds of African schools already running on Kenda.</p>
+        <a href="{% url 'account_signup' %}" class="btn btn-kenda-gold btn-lg px-5">
+            Get Started Free
+        </a>
+    </div>
+</section>
+
 {% endblock %}

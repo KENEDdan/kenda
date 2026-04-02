@@ -5,24 +5,208 @@
     --kenda-violet: #6B46C1;
     --kenda-lavender: #A78BFA;
     --kenda-gold: #F59E0B;
+    --kenda-gold-light: #FDE68A;
     --kenda-light: #F5F3FF;
+    --kenda-white: #ffffff;
 }
 
-body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--kenda-ink); }
-.navbar-kenda { background: var(--kenda-ink); border-bottom: 3px solid var(--kenda-gold); }
-.navbar-kenda .navbar-brand { color: white; font-weight: 700; }
-.navbar-kenda .nav-link { color: rgba(255,255,255,0.8); }
+/* Base */
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--kenda-ink);
+}
+
+.py-6 { padding-top: 5rem; padding-bottom: 5rem; }
+.min-vh-80 { min-height: 80vh; }
+
+/* Navbar */
+.navbar-kenda {
+    background: var(--kenda-ink);
+    border-bottom: 3px solid var(--kenda-gold);
+    padding: 1rem 0;
+}
+.navbar-kenda .navbar-brand {
+    color: white;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+.navbar-kenda .nav-link {
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
 .navbar-kenda .nav-link:hover { color: var(--kenda-gold); }
-.btn-kenda { background: var(--kenda-indigo); color: white; border-radius: 8px; border: none; }
+
+/* Buttons */
+.btn-kenda {
+    background: var(--kenda-indigo);
+    color: white;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+}
 .btn-kenda:hover { background: var(--kenda-purple); color: white; }
+
+.btn-kenda-gold {
+    background: var(--kenda-gold);
+    color: var(--kenda-ink);
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+}
+.btn-kenda-gold:hover {
+    background: var(--kenda-gold-light);
+    color: var(--kenda-ink);
+}
+
+/* Hero */
+.kenda-hero {
+    background: linear-gradient(135deg, var(--kenda-ink) 0%, var(--kenda-indigo) 60%, var(--kenda-purple) 100%);
+    padding: 6rem 0 5rem;
+}
+.kenda-gold-text { color: var(--kenda-gold); }
+.kenda-badge {
+    background: rgba(245,158,11,0.15);
+    color: var(--kenda-gold);
+    border: 1px solid rgba(245,158,11,0.3);
+    font-size: 0.85rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+}
+
+/* Floating hero cards */
+.hero-illustration {
+    position: relative;
+    width: 380px;
+    height: 320px;
+}
+.kenda-card-float {
+    position: absolute;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    animation: floatUpDown 3s ease-in-out infinite;
+}
+.kenda-card-float i { font-size: 1.4rem; color: var(--kenda-gold); }
+.hero-card-1 { top: 10%; left: 0; animation-delay: 0s; }
+.hero-card-2 { top: 42%; right: 0; animation-delay: 1s; }
+.hero-card-3 { bottom: 10%; left: 15%; animation-delay: 2s; }
+
+@keyframes floatUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Strip */
+.kenda-strip {
+    background: white;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+/* Feature cards */
+.kenda-feature-card {
+    background: white;
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.25s ease;
+}
+.kenda-feature-card:hover {
+    border-color: var(--kenda-lavender);
+    box-shadow: 0 8px 32px rgba(45,27,105,0.12);
+    transform: translateY(-4px);
+}
+.kenda-feature-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--kenda-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kenda-feature-icon i {
+    font-size: 1.5rem;
+    color: var(--kenda-violet);
+}
+
+/* Pricing cards */
+.kenda-price-card {
+    background: white;
+    border: 2px solid rgba(167,139,250,0.2);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: all 0.25s ease;
+}
+.kenda-price-card:hover {
+    box-shadow: 0 8px 32px rgba(45,27,105,0.12);
+    transform: translateY(-4px);
+}
+.kenda-price-highlighted {
+    background: var(--kenda-indigo);
+    border-color: var(--kenda-gold);
+    color: white;
+}
+.kenda-price-highlighted .text-muted { color: rgba(255,255,255,0.6) !important; }
+.kenda-price-highlighted li { color: rgba(255,255,255,0.9); }
+.kenda-popular-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--kenda-gold);
+    color: var(--kenda-ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 1rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* CTA banner */
+.kenda-cta-banner {
+    background: linear-gradient(135deg, var(--kenda-purple) 0%, var(--kenda-ink) 100%);
+}
+
+/* Dashboard generic card */
 .kenda-card {
     border: 1px solid var(--kenda-lavender);
-    border-radius: 12px; padding: 1.5rem;
+    border-radius: 12px;
+    padding: 1.5rem;
     box-shadow: 0 2px 12px rgba(45,27,105,0.08);
     transition: box-shadow 0.2s;
+    background: white;
 }
 .kenda-card:hover { box-shadow: 0 4px 24px rgba(45,27,105,0.16); }
-.sidebar { background: var(--kenda-ink); min-height:100vh; width: 240px; }
-.sidebar .nav-link { color: rgba(255,255,255,0.7); }
+
+/* Sidebar */
+.sidebar {
+    background: var(--kenda-ink);
+    min-height: 100vh;
+    width: 240px;
+}
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    margin: 2px 8px;
+    padding: 0.6rem 1rem;
+}
 .sidebar .nav-link:hover,
-.sidebar .nav-link.active { color: white; background: rgba(245,158,11,0.15); }
+.sidebar .nav-link.active {
+    color: white;
+    background: rgba(245,158,11,0.15);
+}
+
+/* Footer */
+footer { border-top: 1px solid rgba(255,255,255,0.08); }
