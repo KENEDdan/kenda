@@ -912,3 +912,46 @@ footer { border-top: 1px solid rgba(255,255,255,0.08); }
         border: 2px solid #ddd;
     }
 }
+
+/* ========================================
+   PROMOTION & TIMELINE
+   ======================================== */
+
+.kenda-promote-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--kenda-violet);
+    padding: 0.5rem 0 0.25rem;
+    border-bottom: 1px solid #EDE9FE;
+}
+
+.kenda-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.kenda-timeline-item {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #F3F4F6;
+    position: relative;
+}
+.kenda-timeline-item:last-child { border-bottom: none; }
+.kenda-timeline-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.dot-success { background: #D1FAE5; color: #059669; }
+.dot-gold { background: #FEF3C7; color: #D97706; }
+.dot-warning { background: #FEE2E2; color: #EF4444; }
+
+.kenda-timeline-content { flex: 1; }

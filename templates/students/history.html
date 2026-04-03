@@ -1,0 +1,100 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link active">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Academic History
+        </h5>
+        <p class="text-muted small mb-0">{{ student.get_full_name }}</p>
+    </div>
+    <a href="{% url 'students:detail' student.pk %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Profile
+    </a>
+</div>
+
+<div class="kenda-card">
+    {% if promotions %}
+    <div class="kenda-timeline">
+        {% for p in promotions %}
+        <div class="kenda-timeline-item">
+            <div class="kenda-timeline-dot
+                {% if p.result == 'promoted' %}dot-success
+                {% elif p.result == 'graduated' %}dot-gold
+                {% else %}dot-warning{% endif %}">
+                <i class="bi
+                    {% if p.result == 'promoted' %}bi-arrow-up
+                    {% elif p.result == 'graduated' %}bi-mortarboard
+                    {% else %}bi-arrow-repeat{% endif %}">
+                </i>
+            </div>
+            <div class="kenda-timeline-content">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fw-bold small">
+                            {% if p.result == 'graduated' %}
+                                Graduated from {{ p.from_grade.name }}
+                            {% elif p.result == 'promoted' %}
+                                Promoted: {{ p.from_grade.name }}
+                                → {{ p.to_grade.name }}
+                            {% else %}
+                                Repeated: {{ p.from_grade.name }}
+                            {% endif %}
+                        </div>
+                        <div class="text-muted" style="font-size:0.78rem;">
+                            {{ p.from_academic_year }}
+                            {% if p.to_academic_year %}
+                                → {{ p.to_academic_year }}
+                            {% endif %}
+                        </div>
+                        {% if p.notes %}
+                        <div class="mt-1 small text-muted fst-italic">
+                            "{{ p.notes }}"
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="text-end">
+                        <span class="badge rounded-pill
+                            {% if p.result == 'promoted' %}bg-success
+                            {% elif p.result == 'graduated' %}bg-warning text-dark
+                            {% else %}bg-secondary{% endif %}">
+                            {{ p.get_result_display }}
+                        </span>
+                        <div class="text-muted mt-1"
+                             style="font-size:0.72rem;">
+                            {{ p.promoted_at|date:"M d, Y" }}
+                        </div>
+                        {% if p.promoted_by %}
+                        <div class="text-muted"
+                             style="font-size:0.7rem;">
+                            by {{ p.promoted_by.get_full_name }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="kenda-empty-state">
+        <i class="bi bi-clock-history"></i>
+        <p>No promotion history yet.<br>
+        This student hasn't been promoted yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

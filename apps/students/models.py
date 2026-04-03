@@ -1,11 +1,11 @@
 import uuid
+import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.accounts.models import CustomUser
 
 
 class AcademicYear(models.Model):
-    """e.g. 2024/2025"""
     name = models.CharField(max_length=20, unique=True)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -19,14 +19,12 @@ class AcademicYear(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Only one academic year can be current at a time
         if self.is_current:
             AcademicYear.objects.exclude(pk=self.pk).update(is_current=False)
         super().save(*args, **kwargs)
 
 
 class Grade(models.Model):
-    """A grade/class level e.g. Grade 1, Form 3, Year 2"""
     name = models.CharField(max_length=50)
     short_name = models.CharField(max_length=10)
     order = models.PositiveIntegerField(default=0)
@@ -39,7 +37,6 @@ class Grade(models.Model):
 
 
 class Stream(models.Model):
-    """A section within a grade e.g. Grade 1A, Grade 1B"""
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE, related_name='streams')
     name = models.CharField(max_length=10)
     capacity = models.PositiveIntegerField(default=40)
@@ -60,7 +57,6 @@ class Stream(models.Model):
 
 
 class Student(models.Model):
-    """Core student record."""
 
     class Status(models.TextChoices):
         ACTIVE = 'active', _('Active')
@@ -79,8 +75,6 @@ class Student(models.Model):
         CustomUser, on_delete=models.SET_NULL,
         null=True, blank=True, related_name='student_profile'
     )
-
-    # Identity
     student_id = models.CharField(max_length=20, unique=True, editable=False)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -89,7 +83,6 @@ class Student(models.Model):
     date_of_birth = models.DateField()
     photo = models.ImageField(upload_to='students/photos/%Y/', null=True, blank=True)
 
-    # Academic placement
     grade = models.ForeignKey(Grade, on_delete=models.PROTECT, related_name='students')
     stream = models.ForeignKey(
         Stream, on_delete=models.SET_NULL,
@@ -99,17 +92,14 @@ class Student(models.Model):
         AcademicYear, on_delete=models.PROTECT, related_name='students'
     )
 
-    # Enrollment
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
     enrollment_date = models.DateField(auto_now_add=True)
 
-    # Contact
     phone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     address = models.TextField(blank=True)
     nationality = models.CharField(max_length=100, blank=True)
 
-    # Guardian
     guardian_name = models.CharField(max_length=200)
     guardian_phone = models.CharField(max_length=20)
     guardian_email = models.EmailField(blank=True)
@@ -133,11 +123,8 @@ class Student(models.Model):
         super().save(*args, **kwargs)
 
     def _generate_student_id(self):
-        import datetime
         year = datetime.date.today().year
-        count = Student.objects.filter(
-            created_at__year=year
-        ).count() + 1
+        count = Student.objects.filter(created_at__year=year).count() + 1
         return f"KND{year}{count:04d}"
 
     @property
@@ -150,3 +137,47 @@ class Student(models.Model):
             'transferred': 'warning',
         }
         return colors.get(self.status, 'secondary')
+
+
+class StudentPromotion(models.Model):
+    """Records each time a student is promoted or held back."""
+
+    class Result(models.TextChoices):
+        PROMOTED = 'promoted', _('Promoted')
+        REPEATED = 'repeated', _('Repeated Year')
+        GRADUATED = 'graduated', _('Graduated')
+
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name='promotions'
+    )
+    from_grade = models.ForeignKey(
+        Grade, on_delete=models.PROTECT, related_name='promotions_from'
+    )
+    to_grade = models.ForeignKey(
+        Grade, on_delete=models.PROTECT,
+        related_name='promotions_to', null=True, blank=True
+    )
+    from_academic_year = models.ForeignKey(
+        AcademicYear, on_delete=models.PROTECT, related_name='promotions_from'
+    )
+    to_academic_year = models.ForeignKey(
+        AcademicYear, on_delete=models.PROTECT,
+        related_name='promotions_to', null=True, blank=True
+    )
+    result = models.CharField(
+        max_length=20, choices=Result.choices, default=Result.PROMOTED
+    )
+    notes = models.TextField(blank=True)
+    promoted_by = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    promoted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-promoted_at']
+
+    def __str__(self):
+        return (
+            f"{self.student.get_full_name()} — "
+            f"{self.from_grade} → {self.to_grade or 'Graduated'}"
+        )

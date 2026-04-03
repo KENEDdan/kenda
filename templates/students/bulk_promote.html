@@ -1,0 +1,123 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<a href="{% url 'students:enrol' %}" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Enrol Student
+</a>
+<a href="{% url 'students:bulk_promote' %}" class="kenda-nav-link active">
+    <i class="bi bi-arrow-up-circle"></i> Bulk Promotion
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Bulk Promotion
+        </h5>
+        <p class="text-muted small mb-0">
+            Promote an entire grade to the next level at once
+        </p>
+    </div>
+    <a href="{% url 'students:list' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Students
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="kenda-card">
+            <div class="kenda-card-title mb-4">
+                <i class="bi bi-people-fill me-2"
+                   style="color:var(--kenda-violet);"></i>
+                Promotion Settings
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="kenda-promote-section-label">From</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Current Grade
+                        </label>
+                        <select name="from_grade"
+                                class="form-select kenda-input" required>
+                            <option value="">Select grade...</option>
+                            {% for grade in grades %}
+                            <option value="{{ grade.id }}">{{ grade.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Current Academic Year
+                        </label>
+                        <select name="from_academic_year"
+                                class="form-select kenda-input" required>
+                            <option value="">Select year...</option>
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}"
+                                {% if year.is_current %}selected{% endif %}>
+                                {{ year.name }}
+                                {% if year.is_current %}(Current){% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <div class="kenda-promote-section-label">To</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Next Grade
+                        </label>
+                        <select name="to_grade"
+                                class="form-select kenda-input" required>
+                            <option value="">Select grade...</option>
+                            {% for grade in grades %}
+                            <option value="{{ grade.id }}">{{ grade.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            New Academic Year
+                        </label>
+                        <select name="to_academic_year"
+                                class="form-select kenda-input" required>
+                            <option value="">Select year...</option>
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}">{{ year.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger mt-4 small">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Warning:</strong> This will promote ALL active students
+                    in the selected grade. This cannot be undone. Make sure you
+                    have the correct grades and years selected before proceeding.
+                </div>
+
+                <button type="submit" class="btn btn-kenda px-5 fw-bold mt-2">
+                    <i class="bi bi-arrow-up-circle me-2"></i>
+                    Run Bulk Promotion
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
