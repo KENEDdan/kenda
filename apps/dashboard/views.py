@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 
@@ -15,13 +14,39 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        from apps.accounts.models import CustomUser
+        from apps.students.models import Student
+
         ctx['page_title'] = 'Admin Dashboard'
         ctx['stats'] = [
-            {'label': 'Total Students', 'value': '0', 'icon': 'bi-people-fill', 'color': 'kenda-stat-purple'},
-            {'label': 'Total Teachers', 'value': '0', 'icon': 'bi-person-workspace', 'color': 'kenda-stat-blue'},
-            {'label': 'Fees Collected', 'value': '$0', 'icon': 'bi-cash-stack', 'color': 'kenda-stat-gold'},
-            {'label': 'Active Classes', 'value': '0', 'icon': 'bi-journal-check', 'color': 'kenda-stat-green'},
+            {
+                'label': 'Total Students',
+                'value': Student.objects.count(),
+                'icon': 'bi-people-fill',
+                'color': 'kenda-stat-purple',
+            },
+            {
+                'label': 'Total Teachers',
+                'value': CustomUser.objects.filter(role='teacher').count(),
+                'icon': 'bi-person-workspace',
+                'color': 'kenda-stat-blue',
+            },
+            {
+                'label': 'Fees Collected',
+                'value': '$0',
+                'icon': 'bi-cash-stack',
+                'color': 'kenda-stat-gold',
+            },
+            {
+                'label': 'Active Students',
+                'value': Student.objects.filter(status='active').count(),
+                'icon': 'bi-journal-check',
+                'color': 'kenda-stat-green',
+            },
         ]
+        ctx['recent_students'] = Student.objects.select_related(
+            'grade', 'stream'
+        ).order_by('-created_at')[:5]
         return ctx
 
 

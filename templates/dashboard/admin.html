@@ -5,10 +5,10 @@
     <i class="bi bi-grid-fill"></i> Overview
 </a>
 <div class="kenda-nav-section">Students</div>
-<a href="#" class="kenda-nav-link">
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
     <i class="bi bi-people-fill"></i> All Students
 </a>
-<a href="#" class="kenda-nav-link">
+<a href="{% url 'students:enrol' %}" class="kenda-nav-link">
     <i class="bi bi-person-plus-fill"></i> Enrol Student
 </a>
 <div class="kenda-nav-section">Academics</div>
@@ -58,23 +58,78 @@
         <div class="kenda-card">
             <div class="kenda-card-header">
                 <span class="kenda-card-title">Recent Registrations</span>
-                <a href="#" class="small kenda-link">View all</a>
+                <a href="{% url 'students:list' %}" class="small kenda-link">View all</a>
             </div>
+
+            {% if recent_students %}
+            <div class="table-responsive">
+                <table class="table kenda-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>ID</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in recent_students %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="kenda-student-avatar-placeholder">
+                                        {{ student.first_name|first }}{{ student.last_name|first }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold small">{{ student.get_full_name }}</div>
+                                        <div class="text-muted" style="font-size:0.75rem;">
+                                            {{ student.enrollment_date|date:"M d, Y" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="kenda-id-badge">{{ student.student_id }}</span></td>
+                            <td class="small">{{ student.grade.name }}</td>
+                            <td>
+                                <span class="badge bg-{{ student.status_badge }} rounded-pill">
+                                    {{ student.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'students:detail' student.pk %}"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
             <div class="kenda-empty-state">
                 <i class="bi bi-people"></i>
                 <p>No students enrolled yet.<br>
-                <a href="#" class="kenda-link">Enrol your first student →</a></p>
+                <a href="{% url 'students:enrol' %}" class="kenda-link">
+                    Enrol your first student →
+                </a></p>
             </div>
+            {% endif %}
         </div>
     </div>
+
     <div class="col-lg-4">
         <div class="kenda-card">
             <div class="kenda-card-header">
                 <span class="kenda-card-title">Quick Actions</span>
             </div>
             <div class="d-flex flex-column gap-2">
-                <a href="#" class="kenda-action-btn primary">
+                <a href="{% url 'students:enrol' %}" class="kenda-action-btn primary">
                     <i class="bi bi-person-plus-fill"></i> Enrol Student
+                </a>
+                <a href="{% url 'students:list' %}" class="kenda-action-btn">
+                    <i class="bi bi-people-fill"></i> View All Students
                 </a>
                 <a href="#" class="kenda-action-btn">
                     <i class="bi bi-journal-plus"></i> Add Class

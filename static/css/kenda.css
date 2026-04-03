@@ -645,3 +645,92 @@ footer { border-top: 1px solid rgba(255,255,255,0.08); }
     border-color: var(--kenda-purple);
     color: white;
 }
+
+/* ========================================
+   STUDENT MODULE
+   ======================================== */
+
+.kenda-table {
+    font-size: 0.875rem;
+}
+.kenda-table thead th {
+    background: #F8F7FF;
+    color: #6B7280;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 2px solid #EDE9FE;
+    white-space: nowrap;
+}
+.kenda-table tbody td {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+}
+.kenda-table tbody tr:hover { background: #FAFBFF; }
+.kenda-table tbody tr:last-child td { border-bottom: none; }
+
+.kenda-id-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--kenda-violet);
+    background: var(--kenda-light);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-family: monospace;
+}
+
+.kenda-student-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.kenda-student-avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.kenda-profile-photo {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    object-fit: cover;
+}
+.kenda-profile-avatar {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
+    color: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.4rem;
+}
+
+.kenda-detail-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9CA3AF;
+    margin-bottom: 0.2rem;
+}
+.kenda-detail-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--kenda-ink);
+}

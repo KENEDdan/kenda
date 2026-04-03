@@ -1,0 +1,170 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<a href="{% url 'students:enrol' %}" class="kenda-nav-link active">
+    <i class="bi bi-person-plus-fill"></i> Enrol Student
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="{% url 'admin:index' %}" class="kenda-nav-link">
+    <i class="bi bi-gear-fill"></i> Django Admin
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            {% if is_edit %}Edit Student{% else %}Enrol New Student{% endif %}
+        </h5>
+        <p class="text-muted small mb-0">
+            {% if is_edit %}Update student information{% else %}Add a new student to the system{% endif %}
+        </p>
+    </div>
+    <a href="{% url 'students:list' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Personal Information -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-person-fill me-2" style="color:var(--kenda-violet);"></i>
+                Personal Information
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">First Name <span class="text-danger">*</span></label>
+                {{ form.first_name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Middle Name</label>
+                {{ form.middle_name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Last Name <span class="text-danger">*</span></label>
+                {{ form.last_name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Gender <span class="text-danger">*</span></label>
+                {{ form.gender }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Date of Birth <span class="text-danger">*</span></label>
+                {{ form.date_of_birth }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Nationality</label>
+                {{ form.nationality }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Phone</label>
+                {{ form.phone }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Photo</label>
+                {{ form.photo }}
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold small">Address</label>
+                {{ form.address }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Placement -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-journal-check me-2" style="color:var(--kenda-violet);"></i>
+                Academic Placement
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Academic Year <span class="text-danger">*</span></label>
+                {{ form.academic_year }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Grade <span class="text-danger">*</span></label>
+                {{ form.grade }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Stream / Section</label>
+                {{ form.stream }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Guardian Information -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-house-heart-fill me-2" style="color:var(--kenda-violet);"></i>
+                Guardian / Parent Information
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Guardian Name <span class="text-danger">*</span></label>
+                {{ form.guardian_name }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold small">Relationship</label>
+                {{ form.guardian_relationship }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold small">Guardian Phone <span class="text-danger">*</span></label>
+                {{ form.guardian_phone }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Guardian Email</label>
+                {{ form.guardian_email }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Form errors -->
+    {% if form.errors %}
+    <div class="alert alert-danger rounded-3 mb-4">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Please fix the errors below before submitting.
+        <ul class="mb-0 mt-2 small">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <li><strong>{{ field }}:</strong> {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Submit -->
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-kenda px-5 py-2 fw-bold">
+            <i class="bi bi-check-circle me-2"></i>
+            {% if is_edit %}Save Changes{% else %}Enrol Student{% endif %}
+        </button>
+        <a href="{% url 'students:list' %}" class="btn btn-outline-secondary px-4 py-2">
+            Cancel
+        </a>
+    </div>
+</form>
+
+{% endblock %}

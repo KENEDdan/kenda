@@ -9,6 +9,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('dashboard/', dashboard_redirect, name='dashboard'),
     path('dashboard/', include('apps.dashboard.urls', namespace='dashboard')),
+    path('students/', include('apps.students.urls', namespace='students')),
     path('', include('apps.public.urls', namespace='public')),
 ]
 
