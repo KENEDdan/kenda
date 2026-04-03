@@ -21,7 +21,6 @@ class StudentEnrolForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Style every field
         for field_name, field in self.fields.items():
             if isinstance(field.widget, forms.Textarea):
                 field.widget.attrs['class'] = 'form-control kenda-input'
@@ -32,9 +31,18 @@ class StudentEnrolForm(forms.ModelForm):
             else:
                 field.widget.attrs['class'] = 'form-control kenda-input'
             field.widget.attrs['placeholder'] = field.label or ''
-        # Default academic year to current
         try:
             current_year = AcademicYear.objects.get(is_current=True)
             self.fields['academic_year'].initial = current_year
         except AcademicYear.DoesNotExist:
             pass
+
+
+class StudentImportForm(forms.Form):
+    csv_file = forms.FileField(
+        label='CSV File',
+        help_text='Upload a .csv file with columns: first_name, last_name, '
+                  'gender, date_of_birth, grade, guardian_name, guardian_phone. '
+                  'Optional: middle_name, phone, email, nationality.',
+        widget=forms.FileInput(attrs={'class': 'form-control kenda-input', 'accept': '.csv'})
+    )

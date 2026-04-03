@@ -1,0 +1,138 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<a href="{% url 'students:enrol' %}" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Enrol Student
+</a>
+<a href="{% url 'students:import' %}" class="kenda-nav-link active">
+    <i class="bi bi-upload"></i> Import CSV
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">Import Students</h5>
+        <p class="text-muted small mb-0">Bulk enrol students from a CSV file</p>
+    </div>
+    <a href="{% url 'students:list' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="kenda-card">
+            <div class="kenda-card-header mb-4">
+                <span class="kenda-card-title">
+                    <i class="bi bi-upload me-2" style="color:var(--kenda-violet);"></i>
+                    Upload CSV File
+                </span>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label fw-semibold small">Select CSV File</label>
+                    {{ form.csv_file }}
+                    <div class="form-text">{{ form.csv_file.help_text }}</div>
+                </div>
+                <button type="submit" class="btn btn-kenda px-5 fw-bold">
+                    <i class="bi bi-upload me-2"></i>Import Students
+                </button>
+            </form>
+
+            {% if error_rows %}
+            <div class="mt-4">
+                <h6 class="fw-bold text-danger">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Import Errors
+                </h6>
+                <div class="kenda-error-list">
+                    {% for error in error_rows %}
+                    <div class="kenda-error-row">
+                        <i class="bi bi-x-circle text-danger me-2"></i>{{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="kenda-card">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">
+                    <i class="bi bi-info-circle me-2" style="color:var(--kenda-violet);"></i>
+                    CSV Format Guide
+                </span>
+            </div>
+            <p class="small text-muted mb-3">
+                Your CSV file must have a header row with these column names:
+            </p>
+            <div class="kenda-csv-guide">
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">first_name</span>
+                    <span class="kenda-csv-required">required</span>
+                </div>
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">last_name</span>
+                    <span class="kenda-csv-required">required</span>
+                </div>
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">gender</span>
+                    <span class="kenda-csv-hint">male / female</span>
+                </div>
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">date_of_birth</span>
+                    <span class="kenda-csv-hint">YYYY-MM-DD</span>
+                </div>
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">grade</span>
+                    <span class="kenda-csv-hint">e.g. Grade 1</span>
+                </div>
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">guardian_name</span>
+                    <span class="kenda-csv-required">required</span>
+                </div>
+                <div class="kenda-csv-row required">
+                    <span class="kenda-csv-col">guardian_phone</span>
+                    <span class="kenda-csv-required">required</span>
+                </div>
+                <div class="kenda-csv-row">
+                    <span class="kenda-csv-col">middle_name</span>
+                    <span class="kenda-csv-optional">optional</span>
+                </div>
+                <div class="kenda-csv-row">
+                    <span class="kenda-csv-col">phone</span>
+                    <span class="kenda-csv-optional">optional</span>
+                </div>
+                <div class="kenda-csv-row">
+                    <span class="kenda-csv-col">email</span>
+                    <span class="kenda-csv-optional">optional</span>
+                </div>
+                <div class="kenda-csv-row">
+                    <span class="kenda-csv-col">nationality</span>
+                    <span class="kenda-csv-optional">optional</span>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <p class="small text-muted mb-2 fw-semibold">Example row:</p>
+                <div class="kenda-code-block">
+                    John,Doe,male,2010-05-15,Grade 1,Jane Doe,+250788000000
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

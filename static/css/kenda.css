@@ -734,3 +734,181 @@ footer { border-top: 1px solid rgba(255,255,255,0.08); }
     font-weight: 500;
     color: var(--kenda-ink);
 }
+
+/* ========================================
+   STUDENT EXTENDED FEATURES
+   ======================================== */
+
+/* CSV Import */
+.kenda-csv-guide {
+    border: 1px solid #EDE9FE;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.kenda-csv-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.825rem;
+    border-bottom: 1px solid #F3F4F6;
+}
+.kenda-csv-row:last-child { border-bottom: none; }
+.kenda-csv-row.required { background: #FAFBFF; }
+.kenda-csv-col {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--kenda-indigo);
+}
+.kenda-csv-required {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #EF4444;
+    background: #FEE2E2;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+}
+.kenda-csv-optional {
+    font-size: 0.7rem;
+    color: #9CA3AF;
+    background: #F3F4F6;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+}
+.kenda-csv-hint {
+    font-size: 0.75rem;
+    color: #6B7280;
+    font-style: italic;
+}
+.kenda-code-block {
+    background: #1E1B4B;
+    color: #A5B4FC;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.78rem;
+    word-break: break-all;
+}
+.kenda-error-list {
+    background: #FFF5F5;
+    border: 1px solid #FED7D7;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.kenda-error-row {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8rem;
+    border-bottom: 1px solid #FED7D7;
+    color: #742A2A;
+}
+.kenda-error-row:last-child { border-bottom: none; }
+
+/* ID Card */
+.kenda-id-card {
+    width: 380px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(45,27,105,0.15);
+    border: 1px solid #EDE9FE;
+}
+.kenda-id-card-header {
+    background: linear-gradient(135deg, var(--kenda-ink) 0%, var(--kenda-indigo) 100%);
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    border-bottom: 3px solid var(--kenda-gold);
+}
+.kenda-id-card-logo {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--kenda-gold);
+    letter-spacing: -1px;
+}
+.kenda-id-card-school {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+}
+.kenda-id-card-type {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--kenda-gold);
+    margin-top: 6px;
+    text-transform: uppercase;
+}
+.kenda-id-card-body {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    align-items: flex-start;
+}
+.kenda-id-card-photo img,
+.kenda-id-card-photo-placeholder {
+    width: 90px;
+    height: 110px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.kenda-id-card-photo-placeholder {
+    background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+.kenda-id-card-name {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--kenda-ink);
+    margin-bottom: 0.25rem;
+}
+.kenda-id-card-id {
+    font-family: monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--kenda-violet);
+    background: var(--kenda-light);
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+}
+.kenda-id-card-detail {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    margin-bottom: 0.3rem;
+    color: var(--kenda-ink);
+}
+.kenda-id-card-detail .label {
+    font-weight: 700;
+    color: #9CA3AF;
+    width: 50px;
+    flex-shrink: 0;
+}
+.kenda-id-card-footer {
+    background: #F8F7FF;
+    border-top: 1px solid #EDE9FE;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.72rem;
+    color: #6B7280;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+/* Print styles */
+@media print {
+    .kenda-sidebar,
+    .kenda-topbar,
+    .d-flex.justify-content-between { display: none !important; }
+    .kenda-content-wrapper { margin-left: 0 !important; }
+    .kenda-id-card {
+        box-shadow: none;
+        border: 2px solid #ddd;
+    }
+}
