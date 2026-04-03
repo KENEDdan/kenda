@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | Kenda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/kenda.css' %}">
+</head>
+<body class="kenda-dashboard-body">
+
+<div class="kenda-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="kenda-sidebar">
+        <div class="kenda-sidebar-brand">
+            <span class="brand-text">kenda</span>
+            <span class="brand-dot"></span>
+        </div>
+
+        <div class="kenda-user-pill">
+            <div class="kenda-avatar-sm">
+                {{ user.first_name|first }}{{ user.last_name|first }}
+            </div>
+            <div class="kenda-user-info">
+                <div class="kenda-user-name">{{ user.get_full_name }}</div>
+                <div class="kenda-user-role">{{ user.get_role_display }}</div>
+            </div>
+        </div>
+
+        <nav class="kenda-nav">
+            {% block sidebar_nav %}{% endblock %}
+        </nav>
+
+        <div class="kenda-sidebar-bottom">
+            <a href="{% url 'account_logout' %}" class="kenda-logout-btn">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="kenda-content-wrapper">
+
+        <!-- TOPBAR -->
+        <header class="kenda-topbar">
+            <div class="kenda-topbar-left">
+                <div class="kenda-page-title">{{ page_title }}</div>
+                <div class="kenda-breadcrumb">
+                    <i class="bi bi-house-fill"></i>
+                    <span>Home</span>
+                    <i class="bi bi-chevron-right"></i>
+                    <span>{{ page_title }}</span>
+                </div>
+            </div>
+            <div class="kenda-topbar-right">
+                <button class="kenda-icon-btn position-relative">
+                    <i class="bi bi-bell"></i>
+                    <span class="kenda-notif-dot"></span>
+                </button>
+                <button class="kenda-icon-btn">
+                    <i class="bi bi-question-circle"></i>
+                </button>
+                <div class="kenda-topbar-avatar">
+                    {{ user.first_name|first }}{{ user.last_name|first }}
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <main class="kenda-main-content">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="kenda-alert kenda-alert-{{ message.tags }}">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {{ message }}
+                <button class="kenda-alert-close" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% block dashboard_content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

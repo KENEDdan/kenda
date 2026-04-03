@@ -1,0 +1,71 @@
+{% extends 'base/base.html' %}
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+<div class="kenda-auth-wrapper">
+    <div class="kenda-auth-card" style="max-width:520px;">
+        <div class="text-center mb-4">
+            <a href="/" class="kenda-auth-logo">kenda</a>
+            <h4 class="fw-bold mt-3 mb-1" style="color:var(--kenda-indigo);">Create your account</h4>
+            <p class="text-muted small">Start your 30-day free trial — no credit card required</p>
+        </div>
+
+        <form method="POST" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">First Name</label>
+                    <input type="text" name="first_name" class="form-control kenda-input"
+                           placeholder="Dan" required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">Last Name</label>
+                    <input type="text" name="last_name" class="form-control kenda-input"
+                           placeholder="Kennedy" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold small">Email Address</label>
+                    <input type="email" name="email" class="form-control kenda-input"
+                           placeholder="admin@yourschool.com" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold small">Username</label>
+                    <input type="text" name="username" class="form-control kenda-input"
+                           placeholder="dankennedy" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold small">Role</label>
+                    <select name="role" class="form-select kenda-input">
+                        <option value="admin">Administrator</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="student">Student</option>
+                        <option value="parent">Parent / Guardian</option>
+                        <option value="staff">Staff</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">Password</label>
+                    <input type="password" name="password1" class="form-control kenda-input"
+                           placeholder="••••••••" required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-semibold small">Confirm Password</label>
+                    <input type="password" name="password2" class="form-control kenda-input"
+                           placeholder="••••••••" required>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-kenda-gold w-100 py-2 fw-bold">
+                        Create Account
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center text-muted small mb-0">
+            Already have an account?
+            <a href="{% url 'account_login' %}" class="kenda-link fw-semibold">Sign in</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

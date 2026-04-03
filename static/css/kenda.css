@@ -210,3 +210,438 @@ body {
 
 /* Footer */
 footer { border-top: 1px solid rgba(255,255,255,0.08); }
+
+/* Auth pages */
+.kenda-auth-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--kenda-light) 0%, #EDE9FE 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+.kenda-auth-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 8px 40px rgba(45,27,105,0.12);
+}
+.kenda-auth-logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--kenda-gold);
+    text-decoration: none;
+    letter-spacing: -1px;
+}
+.kenda-input {
+    border: 2px solid #E8E4F5;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    transition: border-color 0.2s;
+    font-size: 0.95rem;
+}
+.kenda-input:focus {
+    border-color: var(--kenda-violet);
+    box-shadow: 0 0 0 3px rgba(107,70,193,0.1);
+    outline: none;
+}
+.kenda-link {
+    color: var(--kenda-violet);
+    text-decoration: none;
+}
+.kenda-link:hover {
+    color: var(--kenda-indigo);
+    text-decoration: underline;
+}
+
+/* ========================================
+   DASHBOARD LAYOUT
+   ======================================== */
+
+.kenda-dashboard-body {
+    margin: 0;
+    padding: 0;
+    background: #F0EDFB;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.kenda-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.kenda-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--kenda-ink);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 200;
+    flex-shrink: 0;
+}
+
+.kenda-sidebar-brand {
+    padding: 1.75rem 1.5rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.brand-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--kenda-gold);
+    letter-spacing: -1px;
+}
+.brand-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--kenda-gold);
+    border-radius: 50%;
+    margin-top: 6px;
+}
+
+.kenda-user-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    margin: 0.75rem 0.75rem 0.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.kenda-avatar-sm {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.kenda-user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.kenda-user-role {
+    font-size: 0.7rem;
+    color: var(--kenda-gold);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.kenda-nav {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.kenda-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+.kenda-nav-link i { font-size: 1rem; flex-shrink: 0; }
+.kenda-nav-link:hover {
+    color: white;
+    background: rgba(255,255,255,0.07);
+}
+.kenda-nav-link.active {
+    color: white;
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.2);
+}
+.kenda-nav-link.active i { color: var(--kenda-gold); }
+
+.kenda-nav-section {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.25);
+    padding: 1rem 1rem 0.35rem;
+}
+
+.kenda-sidebar-bottom {
+    padding: 1rem 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.kenda-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    font-size: 0.875rem;
+    border-radius: 10px;
+    transition: all 0.15s;
+}
+.kenda-logout-btn:hover {
+    color: #F87171;
+    background: rgba(248,113,113,0.1);
+}
+
+/* MAIN CONTENT AREA */
+.kenda-content-wrapper {
+    margin-left: 260px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* TOPBAR */
+.kenda-topbar {
+    background: white;
+    border-bottom: 1px solid #EDE9FE;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(45,27,105,0.06);
+}
+.kenda-page-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--kenda-ink);
+}
+.kenda-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    margin-top: 2px;
+}
+.kenda-breadcrumb i { font-size: 0.7rem; }
+
+.kenda-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.kenda-icon-btn {
+    width: 38px;
+    height: 38px;
+    border: 1.5px solid #EDE9FE;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6B7280;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.15s;
+    position: relative;
+}
+.kenda-icon-btn:hover {
+    border-color: var(--kenda-lavender);
+    color: var(--kenda-violet);
+}
+.kenda-notif-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #EF4444;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+.kenda-topbar-avatar {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* PAGE CONTENT */
+.kenda-main-content {
+    padding: 2rem;
+    flex: 1;
+}
+
+/* ALERT */
+.kenda-alert {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    position: relative;
+}
+.kenda-alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+.kenda-alert-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 1rem;
+}
+
+/* STAT CARDS */
+.kenda-stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(167,139,250,0.12);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.kenda-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(45,27,105,0.1);
+}
+.kenda-stat-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1.25rem;
+}
+.kenda-stat-purple .kenda-stat-icon-wrap { background: #EDE9FE; color: var(--kenda-violet); }
+.kenda-stat-blue .kenda-stat-icon-wrap { background: #DBEAFE; color: #2563EB; }
+.kenda-stat-gold .kenda-stat-icon-wrap { background: #FEF3C7; color: #D97706; }
+.kenda-stat-green .kenda-stat-icon-wrap { background: #D1FAE5; color: #059669; }
+
+.kenda-stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--kenda-ink);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+}
+.kenda-stat-label {
+    font-size: 0.8rem;
+    color: #9CA3AF;
+    font-weight: 500;
+}
+.kenda-stat-trend {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
+}
+.trend-up { background: #D1FAE5; color: #059669; }
+
+/* CARDS */
+.kenda-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(167,139,250,0.12);
+    box-shadow: 0 1px 4px rgba(45,27,105,0.04);
+}
+.kenda-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+.kenda-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--kenda-ink);
+}
+
+/* EMPTY STATE */
+.kenda-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9CA3AF;
+}
+.kenda-empty-state i {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--kenda-lavender);
+}
+.kenda-empty-state p { margin: 0; font-size: 0.9rem; }
+
+/* QUICK ACTION BUTTONS */
+.kenda-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1.5px solid #EDE9FE;
+    background: white;
+    color: var(--kenda-indigo);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+    width: 100%;
+}
+.kenda-action-btn:hover {
+    border-color: var(--kenda-violet);
+    background: var(--kenda-light);
+    color: var(--kenda-violet);
+}
+.kenda-action-btn i { font-size: 1rem; color: var(--kenda-violet); }
+.kenda-action-btn.primary {
+    background: var(--kenda-indigo);
+    border-color: var(--kenda-indigo);
+    color: white;
+}
+.kenda-action-btn.primary i { color: var(--kenda-gold); }
+.kenda-action-btn.primary:hover {
+    background: var(--kenda-purple);
+    border-color: var(--kenda-purple);
+    color: white;
+}

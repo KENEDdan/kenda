@@ -1,0 +1,16 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:parent' %}" class="kenda-nav-link active">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<a href="#" class="kenda-nav-link"><i class="bi bi-people"></i> My Children</a>
+<a href="#" class="kenda-nav-link"><i class="bi bi-cash"></i> Fee Payments</a>
+{% endblock %}
+{% block dashboard_content %}
+<div class="kenda-card">
+    <div class="kenda-empty-state">
+        <i class="bi bi-house-heart-fill"></i>
+        <p>Parent dashboard — coming in Phase 3.</p>
+    </div>
+</div>
+{% endblock %}

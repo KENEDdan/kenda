@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="kenda-auth-wrapper">
+    <div class="kenda-auth-card">
+        <div class="text-center mb-4">
+            <a href="/" class="kenda-auth-logo">kenda</a>
+            <h4 class="fw-bold mt-3 mb-1" style="color:var(--kenda-indigo);">Welcome back</h4>
+            <p class="text-muted small">Sign in to your school dashboard</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="alert alert-danger py-2 small">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            Invalid email or password. Please try again.
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold small">Email Address</label>
+                <input type="email" name="login" class="form-control kenda-input"
+                       placeholder="admin@yourschool.com" required autofocus>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label fw-semibold small mb-0">Password</label>
+                    <a href="{% url 'account_reset_password' %}" class="small kenda-link">Forgot password?</a>
+                </div>
+                <input type="password" name="password" class="form-control kenda-input mt-1"
+                       placeholder="••••••••" required>
+            </div>
+            <div class="mb-4 form-check">
+                <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                <label class="form-check-label small" for="remember">Keep me signed in</label>
+            </div>
+            <button type="submit" class="btn btn-kenda w-100 py-2 fw-bold">
+                Sign In
+            </button>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center text-muted small mb-0">
+            Don't have an account?
+            <a href="{% url 'account_signup' %}" class="kenda-link fw-semibold">Get started free</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

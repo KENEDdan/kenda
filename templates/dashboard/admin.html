@@ -1,0 +1,93 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link active">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Enrol Student
+</a>
+<div class="kenda-nav-section">Academics</div>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-journal-check"></i> Classes
+</a>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-calendar3"></i> Timetable
+</a>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-clipboard-data"></i> Grades
+</a>
+<div class="kenda-nav-section">Finance</div>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Fee Management
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="#" class="kenda-nav-link">
+    <i class="bi bi-people"></i> Staff & Teachers
+</a>
+<a href="{% url 'admin:index' %}" class="kenda-nav-link">
+    <i class="bi bi-gear-fill"></i> Django Admin
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    {% for stat in stats %}
+    <div class="col-6 col-xl-3">
+        <div class="kenda-stat-card {{ stat.color }}">
+            <span class="kenda-stat-trend trend-up">+0%</span>
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi {{ stat.icon }}"></i>
+            </div>
+            <div class="kenda-stat-value">{{ stat.value }}</div>
+            <div class="kenda-stat-label">{{ stat.label }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Content row -->
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="kenda-card">
+            <div class="kenda-card-header">
+                <span class="kenda-card-title">Recent Registrations</span>
+                <a href="#" class="small kenda-link">View all</a>
+            </div>
+            <div class="kenda-empty-state">
+                <i class="bi bi-people"></i>
+                <p>No students enrolled yet.<br>
+                <a href="#" class="kenda-link">Enrol your first student →</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="kenda-card">
+            <div class="kenda-card-header">
+                <span class="kenda-card-title">Quick Actions</span>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <a href="#" class="kenda-action-btn primary">
+                    <i class="bi bi-person-plus-fill"></i> Enrol Student
+                </a>
+                <a href="#" class="kenda-action-btn">
+                    <i class="bi bi-journal-plus"></i> Add Class
+                </a>
+                <a href="#" class="kenda-action-btn">
+                    <i class="bi bi-cash"></i> Record Payment
+                </a>
+                <a href="#" class="kenda-action-btn">
+                    <i class="bi bi-send"></i> Send Announcement
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
