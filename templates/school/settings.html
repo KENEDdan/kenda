@@ -1,0 +1,261 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<a href="{% url 'students:enrol' %}" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Enrol Student
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="{% url 'school:settings' %}" class="kenda-nav-link active">
+    <i class="bi bi-building"></i> School Settings
+</a>
+<a href="{% url 'admin:index' %}" class="kenda-nav-link">
+    <i class="bi bi-gear-fill"></i> Django Admin
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            School Settings
+        </h5>
+        <p class="text-muted small mb-0">
+            Configure your school's profile and branding
+        </p>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Identity -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-building me-2"
+                   style="color:var(--kenda-violet);"></i>
+                School Identity
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">
+                    School Name <span class="text-danger">*</span>
+                </label>
+                {{ form.name }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold small">Short Name</label>
+                {{ form.short_name }}
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-semibold small">School Type</label>
+                {{ form.school_type }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Motto</label>
+                {{ form.motto }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">
+                    Registration Number
+                </label>
+                {{ form.registration_number }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Branding -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-palette me-2"
+                   style="color:var(--kenda-violet);"></i>
+                Branding
+            </span>
+        </div>
+        <div class="row g-3 align-items-start">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">School Logo</label>
+                {% if form.instance.logo %}
+                <div class="mb-2">
+                    <img src="{{ form.instance.logo.url }}"
+                         alt="Current Logo"
+                         style="height:60px;border-radius:8px;
+                                border:1px solid #EDE9FE;">
+                </div>
+                {% endif %}
+                {{ form.logo }}
+                <div class="form-text">PNG or JPG. Recommended: 200×200px</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">
+                    Principal's Signature
+                </label>
+                {% if form.instance.principal_signature %}
+                <div class="mb-2">
+                    <img src="{{ form.instance.principal_signature.url }}"
+                         alt="Signature"
+                         style="height:40px;border-radius:4px;">
+                </div>
+                {% endif %}
+                {{ form.principal_signature }}
+                <div class="form-text">PNG with transparent background</div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold small">Primary Color</label>
+                {{ form.primary_color }}
+                <div class="form-text">Main brand color</div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold small">
+                    Secondary Color
+                </label>
+                {{ form.secondary_color }}
+                <div class="form-text">Accent color</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-telephone me-2"
+                   style="color:var(--kenda-violet);"></i>
+                Contact Information
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">
+                    Phone (Primary)
+                </label>
+                {{ form.phone }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">
+                    Phone (Alt)
+                </label>
+                {{ form.phone_alt }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Website</label>
+                {{ form.website }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">P.O. Box</label>
+                {{ form.po_box }}
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold small">Address</label>
+                {{ form.address }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">City</label>
+                {{ form.city }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Country</label>
+                {{ form.country }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic & ID Card -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="kenda-card h-100">
+                <div class="kenda-card-header mb-3">
+                    <span class="kenda-card-title">
+                        <i class="bi bi-calendar3 me-2"
+                           style="color:var(--kenda-violet);"></i>
+                        Academic Settings
+                    </span>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label fw-semibold small">
+                            Week Starts
+                        </label>
+                        {{ form.school_week_start }}
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-semibold small">
+                            Week Ends
+                        </label>
+                        {{ form.school_week_end }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Principal's Name
+                        </label>
+                        {{ form.principal_name }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="kenda-card h-100">
+                <div class="kenda-card-header mb-3">
+                    <span class="kenda-card-title">
+                        <i class="bi bi-credit-card me-2"
+                           style="color:var(--kenda-violet);"></i>
+                        ID Card Settings
+                    </span>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Footer Text
+                        </label>
+                        {{ form.id_card_footer }}
+                        <div class="form-text">
+                            Appears at the bottom of every ID card
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Valid For (years)
+                        </label>
+                        {{ form.id_card_valid_years }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   {% if form.errors %}
+<div class="alert alert-danger rounded-3 mb-4 small">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <strong>The following fields have errors:</strong>
+    <ul class="mb-0 mt-2">
+        {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+        <li><strong>{{ field }}</strong>: {{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-kenda px-5 py-2 fw-bold">
+            <i class="bi bi-check-circle me-2"></i>Save Settings
+        </button>
+    </div>
+</form>
+
+{% endblock %}

@@ -148,28 +148,36 @@ class StudentPromotion(models.Model):
         GRADUATED = 'graduated', _('Graduated')
 
     student = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='promotions'
+        Student, on_delete=models.CASCADE,
+        related_name='promotions'
     )
     from_grade = models.ForeignKey(
-        Grade, on_delete=models.PROTECT, related_name='promotions_from'
+        Grade, on_delete=models.PROTECT,
+        related_name='promotions_from'
     )
     to_grade = models.ForeignKey(
         Grade, on_delete=models.PROTECT,
-        related_name='promotions_to', null=True, blank=True
+        related_name='promotions_to',
+        null=True, blank=True
     )
     from_academic_year = models.ForeignKey(
-        AcademicYear, on_delete=models.PROTECT, related_name='promotions_from'
+        AcademicYear, on_delete=models.PROTECT,
+        related_name='promotions_from'
     )
     to_academic_year = models.ForeignKey(
         AcademicYear, on_delete=models.PROTECT,
-        related_name='promotions_to', null=True, blank=True
+        related_name='promotions_to',
+        null=True, blank=True
     )
     result = models.CharField(
-        max_length=20, choices=Result.choices, default=Result.PROMOTED
+        max_length=20, choices=Result.choices,
+        default=Result.PROMOTED
     )
     notes = models.TextField(blank=True)
     promoted_by = models.ForeignKey(
-        CustomUser, on_delete=models.SET_NULL, null=True, blank=True
+        'accounts.CustomUser',
+        on_delete=models.SET_NULL,
+        null=True, blank=True
     )
     promoted_at = models.DateTimeField(auto_now_add=True)
 

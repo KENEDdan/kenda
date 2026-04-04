@@ -803,113 +803,246 @@ footer { border-top: 1px solid rgba(255,255,255,0.08); }
 }
 .kenda-error-row:last-child { border-bottom: none; }
 
-/* ID Card */
+/* ========================================
+   ID CARD — LANDSCAPE PHYSICAL CARD STYLE
+   ======================================== */
+
 .kenda-id-card {
-    width: 380px;
+    width: 540px;
+    height: 320px;
     background: white;
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(45,27,105,0.15);
+    box-shadow: 0 12px 48px rgba(45,27,105,0.2);
     border: 1px solid #EDE9FE;
-}
-.kenda-id-card-header {
-    background: linear-gradient(135deg, var(--kenda-ink) 0%, var(--kenda-indigo) 100%);
-    padding: 1.25rem 1.5rem;
-    text-align: center;
-    border-bottom: 3px solid var(--kenda-gold);
-}
-.kenda-id-card-logo {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--kenda-gold);
-    letter-spacing: -1px;
-}
-.kenda-id-card-school {
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.7);
-    margin-top: 2px;
-}
-.kenda-id-card-type {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--kenda-gold);
-    margin-top: 6px;
-    text-transform: uppercase;
-}
-.kenda-id-card-body {
+    position: relative;
     display: flex;
-    gap: 1.25rem;
-    padding: 1.25rem 1.5rem;
-    align-items: flex-start;
+    flex-direction: column;
 }
-.kenda-id-card-photo img,
-.kenda-id-card-photo-placeholder {
-    width: 90px;
-    height: 110px;
-    border-radius: 10px;
-    object-fit: cover;
+
+/* Watermark */
+.kenda-id-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 220px;
+    height: 220px;
+    opacity: 0.04;
+    z-index: 0;
+    pointer-events: none;
+}
+.kenda-id-watermark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Top color bar */
+.kenda-id-topbar {
+    height: 10px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
     flex-shrink: 0;
 }
-.kenda-id-card-photo-placeholder {
+
+/* Main body */
+.kenda-id-main {
+    display: flex;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    padding: 0.75rem 1rem;
+    gap: 0.875rem;
+}
+
+/* LEFT column */
+.kenda-id-left {
+    display: flex;
+    flex-direction: column;
+    width: 155px;
+    flex-shrink: 0;
+}
+
+/* Logo — TOP LEFT */
+.kenda-id-logo-wrap {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.kenda-id-logo-wrap img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+.kenda-id-logo-placeholder {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+/* School info block below logo */
+.kenda-id-school-block { flex: 1; }
+.kenda-id-school-name {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--kenda-ink);
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.2rem;
+}
+.kenda-id-school-sub {
+    font-size: 0.6rem;
+    color: #6B7280;
+    margin-bottom: 0.15rem;
+}
+.kenda-id-school-motto {
+    font-size: 0.58rem;
+    color: #9CA3AF;
+    font-style: italic;
+}
+.kenda-id-regnum {
+    font-size: 0.58rem;
+    color: #9CA3AF;
+    margin-top: auto;
+    padding-top: 0.4rem;
+}
+
+/* Divider */
+.kenda-id-divider {
+    width: 1px;
+    background: #EDE9FE;
+    margin: 0.25rem 0;
+    flex-shrink: 0;
+}
+
+/* MIDDLE column — student details */
+.kenda-id-middle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.18rem;
+}
+.kenda-id-label-title {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #9CA3AF;
+    margin-bottom: 0.3rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid #EDE9FE;
+}
+.kenda-id-student-name {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--kenda-ink);
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+.kenda-id-student-id {
+    font-family: monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--kenda-violet);
+    background: var(--kenda-light);
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    margin-bottom: 0.35rem;
+}
+.kenda-id-row {
+    display: flex;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    color: var(--kenda-ink);
+    margin-bottom: 0.12rem;
+}
+.kenda-id-row .lbl {
+    font-weight: 700;
+    color: #9CA3AF;
+    width: 52px;
+    flex-shrink: 0;
+}
+
+/* RIGHT column — photo */
+.kenda-id-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+.kenda-id-photo img,
+.kenda-id-photo-placeholder {
+    width: 82px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #EDE9FE;
+}
+.kenda-id-photo-placeholder {
     background: linear-gradient(135deg, var(--kenda-violet), var(--kenda-purple));
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 800;
 }
-.kenda-id-card-name {
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--kenda-ink);
-    margin-bottom: 0.25rem;
-}
-.kenda-id-card-id {
-    font-family: monospace;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--kenda-violet);
-    background: var(--kenda-light);
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 6px;
-    margin-bottom: 0.75rem;
-}
-.kenda-id-card-detail {
-    display: flex;
-    gap: 0.5rem;
-    font-size: 0.78rem;
-    margin-bottom: 0.3rem;
-    color: var(--kenda-ink);
-}
-.kenda-id-card-detail .label {
-    font-weight: 700;
+.kenda-id-validity {
+    font-size: 0.58rem;
+    text-align: center;
     color: #9CA3AF;
-    width: 50px;
-    flex-shrink: 0;
+    line-height: 1.4;
 }
-.kenda-id-card-footer {
-    background: #F8F7FF;
-    border-top: 1px solid #EDE9FE;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.72rem;
-    color: #6B7280;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
+.kenda-id-validity strong {
+    display: block;
+    color: var(--kenda-ink);
+    font-size: 0.62rem;
 }
 
-/* Print styles */
+/* Bottom bar */
+.kenda-id-bottombar {
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+.kenda-id-bottombar span {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.9);
+    font-style: italic;
+    letter-spacing: 0.03em;
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
 @media print {
     .kenda-sidebar,
     .kenda-topbar,
     .d-flex.justify-content-between { display: none !important; }
     .kenda-content-wrapper { margin-left: 0 !important; }
+    .kenda-main-content { padding: 0 !important; }
     .kenda-id-card {
         box-shadow: none;
-        border: 2px solid #ddd;
+        border: 1px solid #ccc;
+        margin: 0 auto;
     }
 }
 
@@ -955,3 +1088,28 @@ footer { border-top: 1px solid rgba(255,255,255,0.08); }
 .dot-warning { background: #FEE2E2; color: #EF4444; }
 
 .kenda-timeline-content { flex: 1; }
+
+/* ========================================
+   SCHOOL SETTINGS
+   ======================================== */
+
+.kenda-color-input {
+    width: 100%;
+    height: 42px;
+    border: 2px solid #E8E4F5;
+    border-radius: 10px;
+    padding: 0.2rem;
+    cursor: pointer;
+    background: white;
+}
+.kenda-color-input:focus {
+    border-color: var(--kenda-violet);
+    outline: none;
+}
+
+.kenda-id-card-motto {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+    margin-top: 2px;
+}

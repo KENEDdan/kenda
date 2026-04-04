@@ -4,15 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import (
     ListView, DetailView, CreateView,
-    UpdateView, DeleteView, View, TemplateView
+    UpdateView, DeleteView, View
 )
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
-from django.http import HttpResponse
-from .models import Student, Grade, Stream, AcademicYear
-from .forms import StudentEnrolForm, StudentImportForm
+from django.shortcuts import get_object_or_404, redirect, render
 from .models import Student, Grade, Stream, AcademicYear, StudentPromotion
+from .forms import StudentEnrolForm, StudentImportForm
 
 
 @method_decorator(login_required, name='dispatch')
@@ -119,7 +117,10 @@ class StudentDeleteView(DeleteView):
         return ctx
 
     def form_valid(self, form):
-        messages.success(self.request, f'Student {self.object.get_full_name()} has been deleted.')
+        messages.success(
+            self.request,
+            f'Student {self.object.get_full_name()} has been deleted.'
+        )
         return super().form_valid(form)
 
 
@@ -149,8 +150,10 @@ class StudentIDCardView(DetailView):
     context_object_name = 'student'
 
     def get_context_data(self, **kwargs):
+        from apps.school.models import SchoolProfile
         ctx = super().get_context_data(**kwargs)
         ctx['page_title'] = f"ID Card — {self.object.get_full_name()}"
+        ctx['school'] = SchoolProfile.get()
         return ctx
 
 
@@ -159,28 +162,41 @@ class StudentImportView(View):
     template_name = 'students/import.html'
 
     def get(self, request):
-        form = StudentImportForm()
-        return self._render(request, form)
+        return render(request, self.template_name, {
+            'form': StudentImportForm(),
+            'page_title': 'Import Students',
+            'error_rows': [],
+        })
 
     def post(self, request):
         form = StudentImportForm(request.POST, request.FILES)
+        error_rows = []
+
         if not form.is_valid():
-            return self._render(request, form)
+            return render(request, self.template_name, {
+                'form': form,
+                'page_title': 'Import Students',
+                'error_rows': error_rows,
+            })
 
         csv_file = request.FILES['csv_file']
         if not csv_file.name.endswith('.csv'):
             messages.error(request, 'Please upload a valid .csv file.')
-            return self._render(request, form)
+            return render(request, self.template_name, {
+                'form': form,
+                'page_title': 'Import Students',
+                'error_rows': error_rows,
+            })
 
         decoded = csv_file.read().decode('utf-8')
         reader = csv.DictReader(io.StringIO(decoded))
-
         success_count = 0
-        error_rows = []
 
         for i, row in enumerate(reader, start=2):
             try:
-                grade = Grade.objects.get(name__iexact=row.get('grade', '').strip())
+                grade = Grade.objects.get(
+                    name__iexact=row.get('grade', '').strip()
+                )
                 academic_year = AcademicYear.objects.get(is_current=True)
                 Student.objects.create(
                     first_name=row['first_name'].strip(),
@@ -201,51 +217,44 @@ class StudentImportView(View):
                 error_rows.append(f"Row {i}: {str(e)}")
 
         if success_count:
-            messages.success(request, f'{success_count} student(s) imported successfully!')
+            messages.success(
+                request,
+                f'{success_count} student(s) imported successfully!'
+            )
         if error_rows:
-            messages.warning(request, f'{len(error_rows)} row(s) failed. Check details below.')
+            messages.warning(
+                request,
+                f'{len(error_rows)} row(s) failed. Check details below.'
+            )
 
-        return self._render(request, form, error_rows)
-
-    def _render(self, request, form, error_rows=None):
-        from django.shortcuts import render
         return render(request, self.template_name, {
             'form': form,
             'page_title': 'Import Students',
-            'error_rows': error_rows or [],
+            'error_rows': error_rows,
         })
-    
-    @method_decorator(login_required, name='dispatch')
-    class StudentPromoteView(View):
-        """Promote a single student to the next grade."""
 
+
+@method_decorator(login_required, name='dispatch')
+class StudentPromoteView(View):
     def get(self, request, pk):
-        from django.shortcuts import render
         student = get_object_or_404(Student, pk=pk)
-        grades = Grade.objects.all()
-        academic_years = AcademicYear.objects.all()
         return render(request, 'students/promote.html', {
             'student': student,
-            'grades': grades,
-            'academic_years': academic_years,
+            'grades': Grade.objects.all(),
+            'academic_years': AcademicYear.objects.all(),
             'page_title': f"Promote — {student.get_full_name()}",
             'result_choices': StudentPromotion.Result.choices,
         })
 
     def post(self, request, pk):
-        from apps.students.models import StudentPromotion
         student = get_object_or_404(Student, pk=pk)
-
         to_grade_id = request.POST.get('to_grade')
         to_year_id = request.POST.get('to_academic_year')
         result = request.POST.get('result', 'promoted')
         notes = request.POST.get('notes', '')
-
         try:
             to_grade = Grade.objects.get(pk=to_grade_id) if to_grade_id else None
             to_year = AcademicYear.objects.get(pk=to_year_id) if to_year_id else None
-
-            # Record the promotion
             StudentPromotion.objects.create(
                 student=student,
                 from_grade=student.grade,
@@ -256,15 +265,12 @@ class StudentImportView(View):
                 notes=notes,
                 promoted_by=request.user,
             )
-
-            # Update student record
             if to_grade:
                 student.grade = to_grade
             if to_year:
                 student.academic_year = to_year
             if result == 'graduated':
                 student.status = 'graduated'
-
             student.save()
             messages.success(
                 request,
@@ -273,13 +279,11 @@ class StudentImportView(View):
             )
         except Exception as e:
             messages.error(request, f"Promotion failed: {str(e)}")
-
         return redirect('students:detail', pk=pk)
 
 
 @method_decorator(login_required, name='dispatch')
 class StudentHistoryView(DetailView):
-    """View a student's full promotion history."""
     model = Student
     template_name = 'students/history.html'
     context_object_name = 'student'
@@ -297,39 +301,28 @@ class StudentHistoryView(DetailView):
 
 @method_decorator(login_required, name='dispatch')
 class BulkPromotionView(View):
-    """Promote an entire grade to the next grade at once."""
-
     def get(self, request):
-        from django.shortcuts import render
-        grades = Grade.objects.all()
-        academic_years = AcademicYear.objects.all()
         return render(request, 'students/bulk_promote.html', {
-            'grades': grades,
-            'academic_years': academic_years,
+            'grades': Grade.objects.all(),
+            'academic_years': AcademicYear.objects.all(),
             'page_title': 'Bulk Promotion',
         })
 
     def post(self, request):
-        from apps.students.models import StudentPromotion
-        from django.shortcuts import render
-
         from_grade_id = request.POST.get('from_grade')
         to_grade_id = request.POST.get('to_grade')
         from_year_id = request.POST.get('from_academic_year')
         to_year_id = request.POST.get('to_academic_year')
-
         try:
             from_grade = Grade.objects.get(pk=from_grade_id)
             to_grade = Grade.objects.get(pk=to_grade_id)
             from_year = AcademicYear.objects.get(pk=from_year_id)
             to_year = AcademicYear.objects.get(pk=to_year_id)
-
             students = Student.objects.filter(
                 grade=from_grade,
                 academic_year=from_year,
                 status='active'
             )
-
             count = 0
             for student in students:
                 StudentPromotion.objects.create(
@@ -345,7 +338,6 @@ class BulkPromotionView(View):
                 student.academic_year = to_year
                 student.save()
                 count += 1
-
             messages.success(
                 request,
                 f"{count} student(s) promoted from "
@@ -353,133 +345,8 @@ class BulkPromotionView(View):
             )
         except Exception as e:
             messages.error(request, f"Bulk promotion failed: {str(e)}")
-
-        grades = Grade.objects.all()
-        academic_years = AcademicYear.objects.all()
-        return render(request, 'students/bulk_promote.html', {
-            'grades': grades,
-            'academic_years': academic_years,
-            'page_title': 'Bulk Promotion',
-        })
-
-@method_decorator(login_required, name='dispatch')
-class StudentPromoteView(View):
-    def get(self, request, pk):
-        from django.shortcuts import render
-        student = get_object_or_404(Student, pk=pk)
-        grades = Grade.objects.all()
-        academic_years = AcademicYear.objects.all()
-        return render(request, 'students/promote.html', {
-            'student': student,
-            'grades': grades,
-            'academic_years': academic_years,
-            'page_title': f"Promote — {student.get_full_name()}",
-            'result_choices': StudentPromotion.Result.choices,
-        })
-
-    def post(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
-        to_grade_id = request.POST.get('to_grade')
-        to_year_id = request.POST.get('to_academic_year')
-        result = request.POST.get('result', 'promoted')
-        notes = request.POST.get('notes', '')
-        try:
-            to_grade = Grade.objects.get(pk=to_grade_id) if to_grade_id else None
-            to_year = AcademicYear.objects.get(pk=to_year_id) if to_year_id else None
-            StudentPromotion.objects.create(
-                student=student,
-                from_grade=student.grade,
-                to_grade=to_grade,
-                from_academic_year=student.academic_year,
-                to_academic_year=to_year,
-                result=result,
-                notes=notes,
-                promoted_by=request.user,
-            )
-            if to_grade:
-                student.grade = to_grade
-            if to_year:
-                student.academic_year = to_year
-            if result == 'graduated':
-                student.status = 'graduated'
-            student.save()
-            messages.success(
-                request,
-                f"{student.get_full_name()} has been "
-                f"{'graduated' if result == 'graduated' else 'promoted to ' + (to_grade.name if to_grade else 'next grade')}."
-            )
-        except Exception as e:
-            messages.error(request, f"Promotion failed: {str(e)}")
-        return redirect('students:detail', pk=pk)
-
-
-@method_decorator(login_required, name='dispatch')
-class StudentHistoryView(DetailView):
-    model = Student
-    template_name = 'students/history.html'
-    context_object_name = 'student'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['page_title'] = f"History — {self.object.get_full_name()}"
-        ctx['promotions'] = self.object.promotions.select_related(
-            'from_grade', 'to_grade',
-            'from_academic_year', 'to_academic_year',
-            'promoted_by'
-        )
-        return ctx
-
-
-@method_decorator(login_required, name='dispatch')
-class BulkPromotionView(View):
-    def get(self, request):
-        from django.shortcuts import render
         return render(request, 'students/bulk_promote.html', {
             'grades': Grade.objects.all(),
             'academic_years': AcademicYear.objects.all(),
             'page_title': 'Bulk Promotion',
         })
-
-    def post(self, request):
-        from django.shortcuts import render
-        from_grade_id = request.POST.get('from_grade')
-        to_grade_id = request.POST.get('to_grade')
-        from_year_id = request.POST.get('from_academic_year')
-        to_year_id = request.POST.get('to_academic_year')
-        try:
-            from_grade = Grade.objects.get(pk=from_grade_id)
-            to_grade = Grade.objects.get(pk=to_grade_id)
-            from_year = AcademicYear.objects.get(pk=from_year_id)
-            to_year = AcademicYear.objects.get(pk=to_year_id)
-            students = Student.objects.filter(
-                grade=from_grade,
-                academic_year=from_year,
-                status='active'
-            )
-            count = 0
-            for student in students:
-                StudentPromotion.objects.create(
-                    student=student,
-                    from_grade=from_grade,
-                    to_grade=to_grade,
-                    from_academic_year=from_year,
-                    to_academic_year=to_year,
-                    result='promoted',
-                    promoted_by=request.user,
-                )
-                student.grade = to_grade
-                student.academic_year = to_year
-                student.save()
-                count += 1
-            messages.success(
-                request,
-                f"{count} student(s) promoted from {from_grade.name} to {to_grade.name} successfully!"
-            )
-        except Exception as e:
-            messages.error(request, f"Bulk promotion failed: {str(e)}")
-        return render(request, 'students/bulk_promote.html', {
-            'grades': Grade.objects.all(),
-            'academic_years': AcademicYear.objects.all(),
-            'page_title': 'Bulk Promotion',
-        })
-        

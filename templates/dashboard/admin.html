@@ -26,8 +26,14 @@
     <i class="bi bi-cash-stack"></i> Fee Management
 </a>
 <div class="kenda-nav-section">System</div>
-<a href="#" class="kenda-nav-link">
-    <i class="bi bi-people"></i> Staff & Teachers
+<a href="{% url 'school:settings' %}" class="kenda-nav-link">
+    <i class="bi bi-building"></i> School Settings
+</a>
+<a href="{% url 'students:bulk_promote' %}" class="kenda-nav-link">
+    <i class="bi bi-arrow-up-circle"></i> Bulk Promotion
+</a>
+<a href="{% url 'students:import' %}" class="kenda-nav-link">
+    <i class="bi bi-upload"></i> Import Students
 </a>
 <a href="{% url 'admin:index' %}" class="kenda-nav-link">
     <i class="bi bi-gear-fill"></i> Django Admin
