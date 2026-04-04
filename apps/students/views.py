@@ -1,5 +1,9 @@
 import csv
 import io
+import datetime
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import (
@@ -9,8 +13,12 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse
+from django.db.models import Q
+
 from .models import Student, Grade, Stream, AcademicYear, StudentPromotion
 from .forms import StudentEnrolForm, StudentImportForm
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -24,7 +32,6 @@ class StudentListView(ListView):
         qs = Student.objects.select_related('grade', 'stream', 'academic_year')
         q = self.request.GET.get('q')
         if q:
-            from django.db.models import Q
             qs = qs.filter(
                 Q(first_name__icontains=q) |
                 Q(last_name__icontains=q) |
@@ -350,3 +357,149 @@ class BulkPromotionView(View):
             'academic_years': AcademicYear.objects.all(),
             'page_title': 'Bulk Promotion',
         })
+
+
+@method_decorator(login_required, name='dispatch')
+class StudentExportView(View):
+    def get(self, request):
+        from apps.school.models import SchoolProfile
+        school = SchoolProfile.get()
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Students"
+
+        # Styles
+        header_fill = PatternFill(start_color="2D1B69", end_color="2D1B69", fill_type="solid")
+        subheader_fill = PatternFill(start_color="F5F3FF", end_color="F5F3FF", fill_type="solid")
+        header_font = Font(name="Calibri", bold=True, color="FFFFFF", size=11)
+        title_font = Font(name="Calibri", bold=True, color="2D1B69", size=14)
+        normal_font = Font(name="Calibri", size=10)
+        center = Alignment(horizontal="center", vertical="center")
+        left = Alignment(horizontal="left", vertical="center")
+        thin_border = Border(
+            left=Side(style="thin", color="E8E4F5"),
+            right=Side(style="thin", color="E8E4F5"),
+            top=Side(style="thin", color="E8E4F5"),
+            bottom=Side(style="thin", color="E8E4F5"),
+        )
+
+        # Title
+        ws.merge_cells("A1:L1")
+        ws["A1"] = school.name
+        ws["A1"].font = title_font
+        ws["A1"].alignment = center
+        ws.row_dimensions[1].height = 28
+
+        # Subtitle
+        ws.merge_cells("A2:L2")
+        ws["A2"] = f"Student Export Report — Generated on {datetime.date.today().strftime('%d %B %Y')}"
+        ws["A2"].font = Font(name="Calibri", color="6B7280", size=10, italic=True)
+        ws["A2"].alignment = center
+        ws.row_dimensions[2].height = 18
+
+        # Filter summary
+        q = request.GET.get('q', '')
+        status = request.GET.get('status', '')
+        grade = request.GET.get('grade', '')
+        filter_text = "All Students"
+        if q:
+            filter_text += f" | Search: {q}"
+        if status:
+            filter_text += f" | Status: {status}"
+        if grade:
+            try:
+                g = Grade.objects.get(pk=grade)
+                filter_text += f" | Grade: {g.name}"
+            except Grade.DoesNotExist:
+                pass
+        ws.merge_cells("A3:L3")
+        ws["A3"] = filter_text
+        ws["A3"].font = Font(name="Calibri", color="9CA3AF", size=9)
+        ws["A3"].alignment = center
+        ws.row_dimensions[3].height = 14
+        ws.row_dimensions[4].height = 6
+
+        # Column headers
+        columns = [
+            ("Student ID", 14), ("First Name", 16), ("Last Name", 16),
+            ("Middle Name", 16), ("Gender", 10), ("Grade", 14),
+            ("Stream", 12), ("Academic Year", 15), ("Status", 12),
+            ("Guardian Name", 20), ("Guardian Phone", 16), ("Enrolled On", 14),
+        ]
+        for col_idx, (col_name, col_width) in enumerate(columns, start=1):
+            cell = ws.cell(row=5, column=col_idx, value=col_name)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = center
+            cell.border = thin_border
+            ws.column_dimensions[openpyxl.utils.get_column_letter(col_idx)].width = col_width
+        ws.row_dimensions[5].height = 22
+
+        # Data
+        qs = Student.objects.select_related(
+            'grade', 'stream', 'academic_year'
+        ).order_by('grade__order', 'last_name', 'first_name')
+        if q:
+            qs = qs.filter(
+                Q(first_name__icontains=q) |
+                Q(last_name__icontains=q) |
+                Q(student_id__icontains=q)
+            )
+        if status:
+            qs = qs.filter(status=status)
+        if grade:
+            qs = qs.filter(grade_id=grade)
+
+        for row_idx, student in enumerate(qs, start=6):
+            row_fill = PatternFill(
+                start_color="FAFBFF" if row_idx % 2 == 0 else "FFFFFF",
+                end_color="FAFBFF" if row_idx % 2 == 0 else "FFFFFF",
+                fill_type="solid"
+            )
+            row_data = [
+                student.student_id,
+                student.first_name,
+                student.last_name,
+                student.middle_name or '',
+                student.get_gender_display(),
+                student.grade.name,
+                str(student.stream) if student.stream else '',
+                str(student.academic_year),
+                student.get_status_display(),
+                student.guardian_name,
+                student.guardian_phone,
+                student.enrollment_date.strftime('%d %b %Y'),
+            ]
+            for col_idx, value in enumerate(row_data, start=1):
+                cell = ws.cell(row=row_idx, column=col_idx, value=value)
+                cell.font = normal_font
+                cell.alignment = left
+                cell.border = thin_border
+                cell.fill = row_fill
+            ws.row_dimensions[row_idx].height = 18
+
+        # Footer
+        total_rows = qs.count()
+        footer_row = 6 + total_rows
+        ws.merge_cells(f"A{footer_row}:L{footer_row}")
+        ws[f"A{footer_row}"] = f"Total: {total_rows} student(s)"
+        ws[f"A{footer_row}"].font = Font(name="Calibri", bold=True, color="2D1B69", size=10)
+        ws[f"A{footer_row}"].fill = subheader_fill
+        ws[f"A{footer_row}"].alignment = left
+        ws.row_dimensions[footer_row].height = 20
+
+        ws.freeze_panes = "A6"
+
+        # Response
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        filename = f"kenda_students_{datetime.date.today().strftime('%Y%m%d')}.xlsx"
+        response = HttpResponse(
+            buffer.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response

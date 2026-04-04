@@ -15,4 +15,5 @@ urlpatterns = [
     path('<uuid:pk>/id-card/', views.StudentIDCardView.as_view(), name='id_card'),
     path('<uuid:pk>/promote/', views.StudentPromoteView.as_view(), name='promote'),
     path('<uuid:pk>/history/', views.StudentHistoryView.as_view(), name='history'),
+    path('export/', views.StudentExportView.as_view(), name='export'),
 ]

@@ -39,6 +39,10 @@
         </p>
     </div>
     <div class="d-flex gap-2">
+        <a href="{% url 'students:export' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+           class="btn btn-outline-secondary btn-sm px-3">
+            <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+        </a>
         <a href="{% url 'students:import' %}" class="btn btn-outline-secondary btn-sm px-3">
             <i class="bi bi-upload me-1"></i> Import CSV
         </a>
@@ -67,7 +71,8 @@
             <select name="grade" class="form-select kenda-input">
                 <option value="">All Grades</option>
                 {% for grade in grades %}
-                <option value="{{ grade.id }}" {% if request.GET.grade == grade.id|stringformat:"s" %}selected{% endif %}>
+                <option value="{{ grade.id }}"
+                    {% if request.GET.grade == grade.id|stringformat:"s" %}selected{% endif %}>
                     {{ grade.name }}
                 </option>
                 {% endfor %}
@@ -78,7 +83,8 @@
             <select name="status" class="form-select kenda-input">
                 <option value="">All</option>
                 {% for value, label in status_choices %}
-                <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>
+                <option value="{{ value }}"
+                    {% if request.GET.status == value %}selected{% endif %}>
                     {{ label }}
                 </option>
                 {% endfor %}
@@ -115,15 +121,20 @@
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             {% if student.photo %}
-                            <img src="{{ student.photo.url }}" class="kenda-student-avatar" alt="">
+                            <img src="{{ student.photo.url }}"
+                                 class="kenda-student-avatar" alt="">
                             {% else %}
                             <div class="kenda-student-avatar-placeholder">
                                 {{ student.first_name|first }}{{ student.last_name|first }}
                             </div>
                             {% endif %}
                             <div>
-                                <div class="fw-semibold small">{{ student.get_full_name }}</div>
-                                <div class="text-muted" style="font-size:0.75rem;">{{ student.email|default:"—" }}</div>
+                                <div class="fw-semibold small">
+                                    {{ student.get_full_name }}
+                                </div>
+                                <div class="text-muted" style="font-size:0.75rem;">
+                                    {{ student.email|default:"—" }}
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -132,14 +143,18 @@
                     <td class="small">{{ student.stream|default:"—" }}</td>
                     <td>
                         <div class="small fw-semibold">{{ student.guardian_name }}</div>
-                        <div class="text-muted" style="font-size:0.75rem;">{{ student.guardian_phone }}</div>
+                        <div class="text-muted" style="font-size:0.75rem;">
+                            {{ student.guardian_phone }}
+                        </div>
                     </td>
                     <td>
                         <span class="badge bg-{{ student.status_badge }} rounded-pill">
                             {{ student.get_status_display }}
                         </span>
                     </td>
-                    <td class="small text-muted">{{ student.enrollment_date|date:"M d, Y" }}</td>
+                    <td class="small text-muted">
+                        {{ student.enrollment_date|date:"M d, Y" }}
+                    </td>
                     <td>
                         <div class="d-flex gap-1">
                             <a href="{% url 'students:detail' student.pk %}"
@@ -158,7 +173,6 @@
         </table>
     </div>
 
-    <!-- Pagination -->
     {% if is_paginated %}
     <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
         <small class="text-muted">
@@ -166,12 +180,14 @@
         </small>
         <div class="d-flex gap-1">
             {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">
+            <a href="?page={{ page_obj.previous_page_number }}"
+               class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-chevron-left"></i>
             </a>
             {% endif %}
             {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-secondary">
+            <a href="?page={{ page_obj.next_page_number }}"
+               class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-chevron-right"></i>
             </a>
             {% endif %}
@@ -183,7 +199,9 @@
     <div class="kenda-empty-state">
         <i class="bi bi-people"></i>
         <p>No students found.<br>
-        <a href="{% url 'students:enrol' %}" class="kenda-link">Enrol your first student →</a></p>
+        <a href="{% url 'students:enrol' %}" class="kenda-link">
+            Enrol your first student →
+        </a></p>
     </div>
     {% endif %}
 </div>
