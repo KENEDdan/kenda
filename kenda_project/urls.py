@@ -14,6 +14,7 @@ urlpatterns = [
     path('', include('apps.public.urls', namespace='public')),
     path('teachers/', include('apps.teachers.urls', namespace='teachers')),
     path('academics/', include('apps.academics.urls', namespace='academics')),
+    path('attendance/', include('apps.attendance.urls', namespace='attendance')),
 ]
 
 if settings.DEBUG:

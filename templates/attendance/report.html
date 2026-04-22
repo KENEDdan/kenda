@@ -1,0 +1,141 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Attendance</div>
+<a href="{% url 'attendance:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-calendar-check-fill"></i> Mark Attendance
+</a>
+<a href="{% url 'attendance:report' %}" class="kenda-nav-link active">
+    <i class="bi bi-bar-chart-fill"></i> Attendance Report
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Attendance Report
+        </h5>
+        <p class="text-muted small mb-0">
+            View attendance summaries by class and date range
+        </p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="kenda-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small">Class</label>
+            <select name="classroom" class="form-select kenda-input">
+                <option value="">Select class...</option>
+                {% for classroom in classrooms %}
+                <option value="{{ classroom.pk }}"
+                    {% if selected_classroom_id == classroom.pk|stringformat:"s" %}
+                        selected{% endif %}>
+                    {{ classroom }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small">From</label>
+            <input type="date" name="date_from"
+                   value="{{ selected_date_from }}"
+                   class="form-control kenda-input">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small">To</label>
+            <input type="date" name="date_to"
+                   value="{{ selected_date_to }}"
+                   class="form-control kenda-input">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-kenda w-100">
+                <i class="bi bi-search me-1"></i> Generate
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if summary %}
+<div class="kenda-card p-0">
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Total Days</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Late</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in summary %}
+                <tr>
+                    <td>
+                        <div class="fw-semibold small">
+                            {{ row.student.get_full_name }}
+                        </div>
+                        <div class="text-muted" style="font-size:0.72rem;">
+                            {{ row.student.student_id }}
+                        </div>
+                    </td>
+                    <td class="small">{{ row.total }}</td>
+                    <td class="small text-success fw-semibold">
+                        {{ row.present }}
+                    </td>
+                    <td class="small text-danger fw-semibold">
+                        {{ row.absent }}
+                    </td>
+                    <td class="small text-warning fw-semibold">
+                        {{ row.late }}
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1"
+                                 style="height:6px;border-radius:3px;">
+                                <div class="progress-bar
+                                    {% if row.pct >= 80 %}bg-success
+                                    {% elif row.pct >= 60 %}bg-warning
+                                    {% else %}bg-danger{% endif %}"
+                                     style="width:{{ row.pct }}%">
+                                </div>
+                            </div>
+                            <span class="small fw-bold
+                                {% if row.pct >= 80 %}text-success
+                                {% elif row.pct >= 60 %}text-warning
+                                {% else %}text-danger{% endif %}">
+                                {{ row.pct }}%
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% elif selected_classroom_id %}
+<div class="kenda-card">
+    <div class="kenda-empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <p>No attendance records found for the selected filters.</p>
+    </div>
+</div>
+{% else %}
+<div class="kenda-card">
+    <div class="kenda-empty-state">
+        <i class="bi bi-bar-chart"></i>
+        <p>Select a class above to generate the attendance report.</p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

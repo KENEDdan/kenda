@@ -1,0 +1,169 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load kenda_tags %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Attendance</div>
+<a href="{% url 'attendance:dashboard' %}" class="kenda-nav-link active">
+    <i class="bi bi-calendar-check-fill"></i> Mark Attendance
+</a>
+<a href="{% url 'attendance:report' %}" class="kenda-nav-link">
+    <i class="bi bi-bar-chart-fill"></i> Reports
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            {{ classroom }}
+        </h5>
+        <p class="text-muted small mb-0">{{ students.count }} students</p>
+    </div>
+    <a href="{% url 'attendance:dashboard' %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+</div>
+
+<!-- Date selector -->
+<div class="kenda-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small">Date</label>
+            <input type="date" name="date"
+                   value="{{ selected_date|date:'Y-m-d' }}"
+                   class="form-control kenda-input"
+                   max="{{ today|date:'Y-m-d' }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-kenda w-100">
+                <i class="bi bi-search me-1"></i> Load
+            </button>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+            {% if already_marked %}
+            <div class="alert alert-info py-2 small mb-0 w-100">
+                <i class="bi bi-info-circle me-1"></i>
+                Attendance already marked for this date. You can update it below.
+            </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+{% if students %}
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+
+    <div class="d-flex gap-2 mb-3">
+        <button type="button" class="btn btn-sm btn-outline-success"
+                onclick="setAll('present')">
+            <i class="bi bi-check-all me-1"></i> Mark All Present
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger"
+                onclick="setAll('absent')">
+            <i class="bi bi-x-circle me-1"></i> Mark All Absent
+        </button>
+    </div>
+
+    <div class="kenda-card p-0">
+        <div class="table-responsive">
+            <table class="table kenda-table mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:35%;">Student</th>
+                        <th>Status</th>
+                        <th>Notes (optional)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="kenda-student-avatar-placeholder">
+                                    {{ student.first_name|first }}{{ student.last_name|first }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">
+                                        {{ student.get_full_name }}
+                                    </div>
+                                    <div class="text-muted"
+                                         style="font-size:0.72rem;">
+                                        {{ student.student_id }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {% for value, label in status_choices %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input status-radio"
+                                           type="radio"
+                                           name="status_{{ student.pk }}"
+                                           value="{{ value }}"
+                                           id="s_{{ student.pk }}_{{ value }}"
+                                           {% if existing_map|length > 0 and student.pk in existing_map %}
+                                               {% if existing_map|get_item:student.pk == value %}checked{% endif %}
+                                           {% else %}
+                                               {% if value == 'present' %}checked{% endif %}
+                                           {% endif %}>
+                                    <label class="form-check-label small
+                                        {% if value == 'present' %}text-success
+                                        {% elif value == 'absent' %}text-danger
+                                        {% elif value == 'late' %}text-warning
+                                        {% else %}text-info{% endif %}"
+                                           for="s_{{ student.pk }}_{{ value }}">
+                                        {{ label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <input type="text"
+                                   name="notes_{{ student.pk }}"
+                                   class="form-control form-control-sm kenda-input"
+                                   placeholder="Optional note..."
+                                   style="max-width:200px;">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex gap-3 mt-4">
+        <button type="submit" class="btn btn-kenda px-5 fw-bold">
+            <i class="bi bi-check-circle me-2"></i>Save Attendance
+        </button>
+        <a href="{% url 'attendance:dashboard' %}"
+           class="btn btn-outline-secondary px-4">Cancel</a>
+    </div>
+</form>
+
+<script>
+function setAll(status) {
+    document.querySelectorAll(
+        `input[type="radio"][value="${status}"]`
+    ).forEach(r => r.checked = true);
+}
+</script>
+
+{% else %}
+<div class="kenda-card">
+    <div class="kenda-empty-state">
+        <i class="bi bi-people"></i>
+        <p>No active students in this class.</p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

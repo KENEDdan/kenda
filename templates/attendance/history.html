@@ -1,0 +1,88 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Attendance</div>
+<a href="{% url 'attendance:dashboard' %}" class="kenda-nav-link active">
+    <i class="bi bi-calendar-check-fill"></i> Mark Attendance
+</a>
+<a href="{% url 'attendance:report' %}" class="kenda-nav-link">
+    <i class="bi bi-bar-chart-fill"></i> Reports
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Attendance History
+        </h5>
+        <p class="text-muted small mb-0">{{ classroom }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'attendance:mark' classroom.pk %}"
+           class="btn btn-kenda btn-sm px-4">
+            <i class="bi bi-pencil-square me-1"></i> Mark Today
+        </a>
+        <a href="{% url 'attendance:dashboard' %}"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+</div>
+
+<div class="kenda-card p-0">
+    {% if records %}
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Student</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th>Marked By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td class="small fw-semibold">
+                        {{ record.date|date:"M d, Y" }}
+                    </td>
+                    <td>
+                        <div class="fw-semibold small">
+                            {{ record.student.get_full_name }}
+                        </div>
+                        <div class="text-muted" style="font-size:0.72rem;">
+                            {{ record.student.student_id }}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ record.status_badge }} rounded-pill">
+                            {{ record.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="small text-muted">
+                        {{ record.notes|default:"—" }}
+                    </td>
+                    <td class="small text-muted">
+                        {{ record.marked_by.get_full_name|default:"—" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="kenda-empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <p>No attendance records yet for this class.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

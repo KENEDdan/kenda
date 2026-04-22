@@ -1,0 +1,125 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<div class="kenda-nav-section">Academics</div>
+<a href="{% url 'academics:class_list' %}" class="kenda-nav-link">
+    <i class="bi bi-journal-check"></i> Classes
+</a>
+<a href="{% url 'academics:subject_list' %}" class="kenda-nav-link">
+    <i class="bi bi-book-fill"></i> Subjects
+</a>
+<div class="kenda-nav-section">Attendance</div>
+<a href="{% url 'attendance:dashboard' %}" class="kenda-nav-link active">
+    <i class="bi bi-calendar-check-fill"></i> Mark Attendance
+</a>
+<a href="{% url 'attendance:report' %}" class="kenda-nav-link">
+    <i class="bi bi-bar-chart-fill"></i> Attendance Report
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="{% url 'school:settings' %}" class="kenda-nav-link">
+    <i class="bi bi-building"></i> School Settings
+</a>
+<a href="{% url 'admin:index' %}" class="kenda-nav-link">
+    <i class="bi bi-gear-fill"></i> Django Admin
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Attendance
+        </h5>
+        <p class="text-muted small mb-0">
+            Today — {{ today|date:"l, F d, Y" }}
+        </p>
+    </div>
+    <a href="{% url 'attendance:report' %}" class="btn btn-outline-secondary btn-sm px-4">
+        <i class="bi bi-bar-chart-fill me-1"></i> View Reports
+    </a>
+</div>
+
+<div class="kenda-card p-0">
+    {% if classrooms %}
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Class Teacher</th>
+                    <th>Students</th>
+                    <th>Today's Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for classroom in classrooms %}
+                <tr>
+                    <td>
+                        <div class="fw-semibold small">
+                            {{ classroom.grade.name }}
+                            {% if classroom.stream %}
+                                {{ classroom.stream.name }}
+                            {% endif %}
+                        </div>
+                        <div class="text-muted" style="font-size:0.75rem;">
+                            {{ classroom.academic_year }}
+                        </div>
+                    </td>
+                    <td class="small">
+                        {{ classroom.class_teacher.get_full_name|default:"—" }}
+                    </td>
+                    <td class="small">{{ classroom.student_count }}</td>
+                    <td>
+                        {% if classroom.pk in marked_today %}
+                        <span class="badge bg-success rounded-pill">
+                            <i class="bi bi-check-circle me-1"></i>Marked
+                        </span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark rounded-pill">
+                            <i class="bi bi-clock me-1"></i>Pending
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'attendance:mark' classroom.pk %}"
+                               class="btn btn-sm btn-kenda px-3">
+                                <i class="bi bi-pencil-square me-1"></i>
+                                {% if classroom.pk in marked_today %}
+                                    Edit
+                                {% else %}
+                                    Mark
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'attendance:history' classroom.pk %}"
+                               class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-clock-history"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="kenda-empty-state">
+        <i class="bi bi-calendar-check"></i>
+        <p>No active classes found.<br>
+        <a href="{% url 'academics:class_add' %}" class="kenda-link">
+            Create a class first →
+        </a></p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
