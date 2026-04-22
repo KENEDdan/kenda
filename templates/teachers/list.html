@@ -1,0 +1,201 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<div class="kenda-nav-section">Teachers</div>
+<a href="{% url 'teachers:list' %}" class="kenda-nav-link active">
+    <i class="bi bi-person-workspace"></i> All Teachers
+</a>
+<a href="{% url 'teachers:add' %}" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Add Teacher
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="{% url 'school:settings' %}" class="kenda-nav-link">
+    <i class="bi bi-building"></i> School Settings
+</a>
+<a href="{% url 'admin:index' %}" class="kenda-nav-link">
+    <i class="bi bi-gear-fill"></i> Django Admin
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            All Teachers
+        </h5>
+        <p class="text-muted small mb-0">
+            {{ total }} total &bull; {{ active }} active
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'teachers:export' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+           class="btn btn-outline-secondary btn-sm px-3">
+            <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+        </a>
+        <a href="{% url 'teachers:add' %}" class="btn btn-kenda px-4">
+            <i class="bi bi-person-plus-fill me-2"></i>Add Teacher
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="kenda-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label small fw-semibold">Search</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="q" value="{{ request.GET.q }}"
+                       class="form-control kenda-input border-start-0 ps-0"
+                       placeholder="Name, ID or email...">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Department</label>
+            <select name="department" class="form-select kenda-input">
+                <option value="">All Departments</option>
+                {% for dept in departments %}
+                <option value="{{ dept.id }}"
+                    {% if request.GET.department == dept.id|stringformat:"s" %}
+                        selected{% endif %}>
+                    {{ dept.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-semibold">Status</label>
+            <select name="status" class="form-select kenda-input">
+                <option value="">All</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if request.GET.status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-kenda w-100">
+                <i class="bi bi-funnel me-1"></i> Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Teacher table -->
+<div class="kenda-card p-0">
+    {% if teachers %}
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Teacher</th>
+                    <th>ID</th>
+                    <th>Department</th>
+                    <th>Type</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if teacher.photo %}
+                            <img src="{{ teacher.photo.url }}"
+                                 class="kenda-student-avatar" alt="">
+                            {% else %}
+                            <div class="kenda-student-avatar-placeholder">
+                                {{ teacher.first_name|first }}{{ teacher.last_name|first }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div class="fw-semibold small">
+                                    {{ teacher.get_full_name }}
+                                </div>
+                                <div class="text-muted" style="font-size:0.75rem;">
+                                    {{ teacher.email|default:"—" }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="kenda-id-badge">{{ teacher.teacher_id }}</span>
+                    </td>
+                    <td class="small">{{ teacher.department|default:"—" }}</td>
+                    <td class="small">{{ teacher.get_employment_type_display }}</td>
+                    <td class="small">{{ teacher.phone|default:"—" }}</td>
+                    <td>
+                        <span class="badge bg-{{ teacher.status_badge }} rounded-pill">
+                            {{ teacher.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="small text-muted">
+                        {{ teacher.join_date|date:"M d, Y" }}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'teachers:detail' teacher.pk %}"
+                               class="btn btn-sm btn-outline-secondary" title="View">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'teachers:edit' teacher.pk %}"
+                               class="btn btn-sm btn-outline-secondary" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+        <small class="text-muted">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </small>
+        <div class="d-flex gap-1">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="kenda-empty-state">
+        <i class="bi bi-person-workspace"></i>
+        <p>No teachers found.<br>
+        <a href="{% url 'teachers:add' %}" class="kenda-link">
+            Add your first teacher →
+        </a></p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

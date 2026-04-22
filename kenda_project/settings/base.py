@@ -43,6 +43,8 @@ LOCAL_APPS = [
     'apps.dashboard',
     'apps.students',
     'apps.school',
+    'apps.teachers',
+    'apps.academics',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -123,7 +125,8 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
-
+ACCOUNT_SIGNUP_FORM_CLASS = 'apps.accounts.forms.KendaSignupForm'
+ACCOUNT_ADAPTER = 'apps.accounts.adapter.KendaAccountAdapter'
 # DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

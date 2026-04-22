@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
+from django.shortcuts import redirect
 
 
 class LoginRequiredMixin:
@@ -12,11 +13,23 @@ class LoginRequiredMixin:
 class AdminDashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard/admin.html"
 
+    def get(self, request, *args, **kwargs):
+        from apps.school.models import SchoolProfile
+        school = SchoolProfile.objects.filter(pk=1).first()
+        # If school name is still default or not set up, redirect to settings
+        if not school or school.name == 'My School':
+            from django.contrib import messages
+            messages.info(
+                request,
+                'Welcome to Kenda! Please complete your school profile to get started.'
+            )
+            return redirect('school:settings')
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        from apps.accounts.models import CustomUser
         from apps.students.models import Student
-
+        from apps.teachers.models import Teacher
         ctx['page_title'] = 'Admin Dashboard'
         ctx['stats'] = [
             {
@@ -27,7 +40,7 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
             },
             {
                 'label': 'Total Teachers',
-                'value': CustomUser.objects.filter(role='teacher').count(),
+                'value': Teacher.objects.count(),
                 'icon': 'bi-person-workspace',
                 'color': 'kenda-stat-blue',
             },

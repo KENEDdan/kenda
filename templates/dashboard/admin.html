@@ -11,15 +11,22 @@
 <a href="{% url 'students:enrol' %}" class="kenda-nav-link">
     <i class="bi bi-person-plus-fill"></i> Enrol Student
 </a>
+<div class="kenda-nav-section">Teachers</div>
+<a href="{% url 'teachers:list' %}" class="kenda-nav-link">
+    <i class="bi bi-person-workspace"></i> All Teachers
+</a>
+<a href="{% url 'teachers:add' %}" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Add Teacher
+</a>
 <div class="kenda-nav-section">Academics</div>
-<a href="#" class="kenda-nav-link">
+<a href="{% url 'academics:class_list' %}" class="kenda-nav-link">
     <i class="bi bi-journal-check"></i> Classes
 </a>
-<a href="#" class="kenda-nav-link">
-    <i class="bi bi-calendar3"></i> Timetable
+<a href="{% url 'academics:subject_list' %}" class="kenda-nav-link">
+    <i class="bi bi-book-fill"></i> Subjects
 </a>
-<a href="#" class="kenda-nav-link">
-    <i class="bi bi-clipboard-data"></i> Grades
+<a href="{% url 'academics:term_list' %}" class="kenda-nav-link">
+    <i class="bi bi-calendar3"></i> Terms
 </a>
 <div class="kenda-nav-section">Finance</div>
 <a href="#" class="kenda-nav-link">

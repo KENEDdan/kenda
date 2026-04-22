@@ -5,9 +5,9 @@
 <a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
     <i class="bi bi-grid-fill"></i> Overview
 </a>
-<div class="kenda-nav-section">Students</div>
-<a href="{% url 'students:list' %}" class="kenda-nav-link active">
-    <i class="bi bi-people-fill"></i> All Students
+<div class="kenda-nav-section">Teachers</div>
+<a href="{% url 'teachers:list' %}" class="kenda-nav-link active">
+    <i class="bi bi-person-workspace"></i> All Teachers
 </a>
 {% endblock %}
 
@@ -16,15 +16,15 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
-            Student ID Card
+            Teacher ID Card
         </h5>
-        <p class="text-muted small mb-0">{{ student.get_full_name }}</p>
+        <p class="text-muted small mb-0">{{ teacher.get_full_name }}</p>
     </div>
     <div class="d-flex gap-2">
         <button onclick="window.print()" class="btn btn-kenda btn-sm px-4">
             <i class="bi bi-printer me-2"></i>Print Both Sides
         </button>
-        <a href="{% url 'students:detail' student.pk %}"
+        <a href="{% url 'teachers:detail' teacher.pk %}"
            class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-left me-1"></i> Back
         </a>
@@ -33,7 +33,7 @@
 
 <div class="d-flex flex-column align-items-center gap-4">
 
-    <!-- FRONT SIDE -->
+    <!-- FRONT -->
     <div>
         <p class="text-muted small text-center mb-2 fw-semibold">
             <i class="bi bi-front me-1"></i> FRONT
@@ -45,10 +45,11 @@
             </div>
             {% endif %}
 
+            <!-- Gold top bar for teachers -->
             <div class="kenda-id-topbar"
                  style="background: linear-gradient(90deg,
-                        {{ school.primary_color|default:'#2D1B69' }},
-                        {{ school.secondary_color|default:'#F59E0B' }});"></div>
+                        {{ school.secondary_color|default:'#F59E0B' }},
+                        {{ school.primary_color|default:'#2D1B69' }});"></div>
 
             <div class="kenda-id-main">
                 <div class="kenda-id-left">
@@ -85,42 +86,50 @@
                 <div class="kenda-id-divider"></div>
 
                 <div class="kenda-id-middle">
-                    <div class="kenda-id-label-title">Student Identification</div>
+                    <!-- Teacher badge -->
+                    <div style="display:inline-block;background:var(--kenda-gold);
+                                color:var(--kenda-ink);font-size:0.58rem;
+                                font-weight:800;padding:0.15rem 0.6rem;
+                                border-radius:4px;letter-spacing:0.08em;
+                                margin-bottom:0.4rem;text-transform:uppercase;">
+                        Teaching Staff
+                    </div>
                     <div class="kenda-id-student-name">
-                        {{ student.get_full_name }}
+                        {{ teacher.get_full_name }}
                     </div>
                     <div class="kenda-id-student-id">
-                        {{ student.student_id }}
+                        {{ teacher.teacher_id }}
+                    </div>
+                    {% if teacher.department %}
+                    <div class="kenda-id-row">
+                        <span class="lbl">Dept.</span>
+                        <span>{{ teacher.department }}</span>
+                    </div>
+                    {% endif %}
+                    {% if teacher.specialization %}
+                    <div class="kenda-id-row">
+                        <span class="lbl">Subject</span>
+                        <span>{{ teacher.specialization }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="kenda-id-row">
+                        <span class="lbl">Type</span>
+                        <span>{{ teacher.get_employment_type_display }}</span>
                     </div>
                     <div class="kenda-id-row">
-                        <span class="lbl">Grade</span>
-                        <span>{{ student.grade.name }}
-                            {% if student.stream %} — {{ student.stream }}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="kenda-id-row">
-                        <span class="lbl">Year</span>
-                        <span>{{ student.academic_year }}</span>
-                    </div>
-                    <div class="kenda-id-row">
-                        <span class="lbl">Gender</span>
-                        <span>{{ student.get_gender_display }}</span>
-                    </div>
-                    <div class="kenda-id-row">
-                        <span class="lbl">Enrolled</span>
-                        <span>{{ student.enrollment_date|date:"M Y" }}</span>
+                        <span class="lbl">Joined</span>
+                        <span>{{ teacher.join_date|date:"M Y" }}</span>
                     </div>
                 </div>
 
                 <div class="kenda-id-right">
                     <div class="kenda-id-photo">
-                        {% if student.photo %}
-                        <img src="{{ student.photo.url }}"
-                             alt="{{ student.get_full_name }}">
+                        {% if teacher.photo %}
+                        <img src="{{ teacher.photo.url }}"
+                             alt="{{ teacher.get_full_name }}">
                         {% else %}
                         <div class="kenda-id-photo-placeholder">
-                            {{ student.first_name|first }}{{ student.last_name|first }}
+                            {{ teacher.first_name|first }}{{ teacher.last_name|first }}
                         </div>
                         {% endif %}
                     </div>
@@ -133,8 +142,8 @@
 
             <div class="kenda-id-bottombar"
                  style="background: linear-gradient(90deg,
-                        {{ school.primary_color|default:'#2D1B69' }},
-                        {{ school.secondary_color|default:'#F59E0B' }});">
+                        {{ school.secondary_color|default:'#F59E0B' }},
+                        {{ school.primary_color|default:'#2D1B69' }});">
                 <span>
                     {{ school.id_card_footer|default:"If found please return to school office" }}
                 </span>
@@ -142,7 +151,7 @@
         </div>
     </div>
 
-    <!-- BACK SIDE -->
+    <!-- BACK -->
     <div>
         <p class="text-muted small text-center mb-2 fw-semibold">
             <i class="bi bi-back me-1"></i> BACK
@@ -151,29 +160,53 @@
 
             <div class="kenda-id-topbar"
                  style="background: linear-gradient(90deg,
-                        {{ school.secondary_color|default:'#F59E0B' }},
-                        {{ school.primary_color|default:'#2D1B69' }});"></div>
+                        {{ school.primary_color|default:'#2D1B69' }},
+                        {{ school.secondary_color|default:'#F59E0B' }});"></div>
 
             <div class="kenda-id-main">
 
-            
-                    {% if student.address %}
-                    <div class="kenda-id-row mt-1">
-                        <span class="lbl">Address</span>
-                        <span style="font-size:0.62rem;">
-                            {{ student.address }}
-                        </span>
+                <div class="kenda-id-left" style="width:200px;">
+                    <div class="kenda-id-label-title mb-2">
+                        Personal Contact
+                    </div>
+                    {% if teacher.phone %}
+                    <div class="kenda-id-row">
+                        <span class="lbl">Phone</span>
+                        <span>{{ teacher.phone }}</span>
+                    </div>
+                    {% endif %}
+                    {% if teacher.email %}
+                    <div class="kenda-id-row">
+                        <span class="lbl">Email</span>
+                        <span style="font-size:0.62rem;">{{ teacher.email }}</span>
+                    </div>
+                    {% endif %}
+                    {% if teacher.qualification %}
+                    <div class="kenda-id-row">
+                        <span class="lbl">Qual.</span>
+                        <span>{{ teacher.qualification }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if teacher.emergency_contact_name %}
+                    <div class="kenda-id-label-title mt-3 mb-1">
+                        Emergency Contact
+                    </div>
+                    <div class="kenda-id-row">
+                        <span class="lbl">Name</span>
+                        <span>{{ teacher.emergency_contact_name }}</span>
+                    </div>
+                    <div class="kenda-id-row">
+                        <span class="lbl">Phone</span>
+                        <span>{{ teacher.emergency_contact_phone }}</span>
                     </div>
                     {% endif %}
                 </div>
 
                 <div class="kenda-id-divider"></div>
 
-                <!-- Back right — School contact + rules -->
                 <div class="kenda-id-middle">
-                    <div class="kenda-id-label-title mb-2">
-                        School Contact
-                    </div>
+                    <div class="kenda-id-label-title mb-2">School Contact</div>
                     {% if school.phone %}
                     <div class="kenda-id-row">
                         <span class="lbl">Phone</span>
@@ -192,30 +225,38 @@
                         <span style="font-size:0.62rem;">{{ school.address }}</span>
                     </div>
                     {% endif %}
-                    {% if school.website %}
-                    <div class="kenda-id-row">
-                        <span class="lbl">Web</span>
-                        <span style="font-size:0.62rem;">{{ school.website }}</span>
-                    </div>
-                    {% endif %}
 
-                    <div class="kenda-id-label-title mt-3 mb-1">
-                        Card Rules
-                    </div>
+                    <div class="kenda-id-label-title mt-3 mb-1">Card Rules</div>
                     <div style="font-size:0.6rem;color:#6B7280;line-height:1.5;">
-                        • This card is the property of {{ school.name }}.<br>
-                        • Must be carried at all times on school premises.<br>
+                        • This card identifies the holder as staff of
+                        {{ school.name }}.<br>
+                        • Must be worn visibly on school premises.<br>
                         • Loss must be reported immediately to school admin.<br>
                         • Not transferable — for holder's use only.
                     </div>
+
+                    {% if school.principal_name %}
+                    <div class="mt-3" style="border-top:1px solid #EDE9FE;
+                                             padding-top:0.5rem;">
+                        {% if school.principal_signature %}
+                        <img src="{{ school.principal_signature.url }}"
+                             style="height:28px;opacity:0.8;" alt="Signature">
+                        <br>
+                        {% endif %}
+                        <div style="font-size:0.6rem;color:#6B7280;">
+                            {{ school.principal_name }}<br>
+                            <em>Principal / Head of School</em>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
 
             </div>
 
             <div class="kenda-id-bottombar"
                  style="background: linear-gradient(90deg,
-                        {{ school.secondary_color|default:'#F59E0B' }},
-                        {{ school.primary_color|default:'#2D1B69' }});">
+                        {{ school.primary_color|default:'#2D1B69' }},
+                        {{ school.secondary_color|default:'#F59E0B' }});">
                 <span>{{ school.name }} — {{ school.city|default:"" }}</span>
             </div>
         </div>

@@ -16,4 +16,5 @@ urlpatterns = [
     path('<uuid:pk>/promote/', views.StudentPromoteView.as_view(), name='promote'),
     path('<uuid:pk>/history/', views.StudentHistoryView.as_view(), name='history'),
     path('export/', views.StudentExportView.as_view(), name='export'),
+    path('credentials/', views.CredentialsView.as_view(), name='credentials'),
 ]

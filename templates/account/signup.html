@@ -1,61 +1,97 @@
 {% extends 'base/base.html' %}
-{% block title %}Create Account{% endblock %}
+{% block title %}Register Your School{% endblock %}
 
 {% block content %}
 <div class="kenda-auth-wrapper">
     <div class="kenda-auth-card" style="max-width:520px;">
         <div class="text-center mb-4">
             <a href="/" class="kenda-auth-logo">kenda</a>
-            <h4 class="fw-bold mt-3 mb-1" style="color:var(--kenda-indigo);">Create your account</h4>
-            <p class="text-muted small">Start your 30-day free trial — no credit card required</p>
+            <h4 class="fw-bold mt-3 mb-1" style="color:var(--kenda-indigo);">
+                Register Your School
+            </h4>
+            <p class="text-muted small">
+                Create your administrator account to get started.
+            </p>
         </div>
+
+        {% if form.errors %}
+        <div class="alert alert-danger py-2 small mb-3">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            Please fix the errors below.
+            <ul class="mb-0 mt-1">
+                {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
         <form method="POST" action="{% url 'account_signup' %}">
             {% csrf_token %}
             <div class="row g-3">
                 <div class="col-6">
-                    <label class="form-label fw-semibold small">First Name</label>
-                    <input type="text" name="first_name" class="form-control kenda-input"
+                    <label class="form-label fw-semibold small">
+                        First Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" name="first_name"
+                           class="form-control kenda-input"
                            placeholder="Dan" required>
                 </div>
                 <div class="col-6">
-                    <label class="form-label fw-semibold small">Last Name</label>
-                    <input type="text" name="last_name" class="form-control kenda-input"
+                    <label class="form-label fw-semibold small">
+                        Last Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" name="last_name"
+                           class="form-control kenda-input"
                            placeholder="Kennedy" required>
                 </div>
                 <div class="col-12">
-                    <label class="form-label fw-semibold small">Email Address</label>
-                    <input type="email" name="email" class="form-control kenda-input"
+                    <label class="form-label fw-semibold small">
+                        Email Address <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" name="email"
+                           class="form-control kenda-input"
                            placeholder="admin@yourschool.com" required>
                 </div>
                 <div class="col-12">
-                    <label class="form-label fw-semibold small">Username</label>
-                    <input type="text" name="username" class="form-control kenda-input"
+                    <label class="form-label fw-semibold small">
+                        Username <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" name="username"
+                           class="form-control kenda-input"
                            placeholder="dankennedy" required>
                 </div>
-                <div class="col-12">
-                    <label class="form-label fw-semibold small">Role</label>
-                    <select name="role" class="form-select kenda-input">
-                        <option value="admin">Administrator</option>
-                        <option value="teacher">Teacher</option>
-                        <option value="student">Student</option>
-                        <option value="parent">Parent / Guardian</option>
-                        <option value="staff">Staff</option>
-                    </select>
-                </div>
                 <div class="col-6">
-                    <label class="form-label fw-semibold small">Password</label>
-                    <input type="password" name="password1" class="form-control kenda-input"
+                    <label class="form-label fw-semibold small">
+                        Password <span class="text-danger">*</span>
+                    </label>
+                    <input type="password" name="password1"
+                           class="form-control kenda-input"
                            placeholder="••••••••" required>
                 </div>
                 <div class="col-6">
-                    <label class="form-label fw-semibold small">Confirm Password</label>
-                    <input type="password" name="password2" class="form-control kenda-input"
+                    <label class="form-label fw-semibold small">
+                        Confirm Password <span class="text-danger">*</span>
+                    </label>
+                    <input type="password" name="password2"
+                           class="form-control kenda-input"
                            placeholder="••••••••" required>
                 </div>
                 <div class="col-12">
-                    <button type="submit" class="btn btn-kenda-gold w-100 py-2 fw-bold">
-                        Create Account
+                    <div class="alert alert-info py-2 small mb-0">
+                        <i class="bi bi-shield-check me-1"></i>
+                        You are registering as a <strong>School Administrator</strong>.
+                        Students and teachers receive login credentials from you —
+                        they do not register here.
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit"
+                            class="btn btn-kenda-gold w-100 py-2 fw-bold">
+                        <i class="bi bi-building me-2"></i>
+                        Create Administrator Account
                     </button>
                 </div>
             </div>
@@ -64,7 +100,9 @@
         <hr class="my-4">
         <p class="text-center text-muted small mb-0">
             Already have an account?
-            <a href="{% url 'account_login' %}" class="kenda-link fw-semibold">Sign in</a>
+            <a href="{% url 'account_login' %}" class="kenda-link fw-semibold">
+                Sign in
+            </a>
         </p>
     </div>
 </div>

@@ -20,7 +20,6 @@ from .models import Student, Grade, Stream, AcademicYear, StudentPromotion
 from .forms import StudentEnrolForm, StudentImportForm
 
 
-
 @method_decorator(login_required, name='dispatch')
 class StudentListView(ListView):
     model = Student
@@ -69,8 +68,66 @@ class StudentEnrolView(CreateView):
         return ctx
 
     def form_valid(self, form):
-        messages.success(self.request, 'Student enrolled successfully!')
-        return super().form_valid(form)
+        student = form.save(commit=False)
+        student.save()
+        credentials = self._create_user_account(student)
+        if credentials:
+            self.request.session['new_credentials'] = {
+                'type': 'Student',
+                'name': student.get_full_name(),
+                'student_id': student.student_id,
+                'username': credentials['username'],
+                'password': credentials['password'],
+                'email': credentials['email'],
+            }
+            return redirect('students:credentials')
+        messages.success(
+            self.request,
+            f'{student.get_full_name()} enrolled successfully!'
+        )
+        return redirect(self.success_url)
+
+    def _create_user_account(self, student):
+        from apps.accounts.models import CustomUser
+        import random
+        import string
+
+        if student.user:
+            return None
+
+        base = f"{student.first_name.lower()}.{student.last_name.lower()}"
+        base = ''.join(c for c in base if c.isalnum() or c == '.')
+        username = base
+        counter = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = f"{base}{counter}"
+            counter += 1
+
+        temp_password = ''.join(
+            random.choices(string.ascii_letters + string.digits, k=10)
+        )
+
+        email = student.email if student.email \
+            else f"{username}@student.kenda"
+
+        try:
+            user = CustomUser.objects.create_user(
+                username=username,
+                email=email,
+                password=temp_password,
+                first_name=student.first_name,
+                last_name=student.last_name,
+                role='student',
+            )
+            student.user = user
+            student.save()
+            return {
+                'username': username,
+                'password': temp_password,
+                'email': email,
+            }
+        except Exception as e:
+            return None
 
     def form_invalid(self, form):
         messages.error(self.request, 'Please correct the errors below.')
@@ -369,9 +426,12 @@ class StudentExportView(View):
         ws = wb.active
         ws.title = "Students"
 
-        # Styles
-        header_fill = PatternFill(start_color="2D1B69", end_color="2D1B69", fill_type="solid")
-        subheader_fill = PatternFill(start_color="F5F3FF", end_color="F5F3FF", fill_type="solid")
+        header_fill = PatternFill(
+            start_color="2D1B69", end_color="2D1B69", fill_type="solid"
+        )
+        subheader_fill = PatternFill(
+            start_color="F5F3FF", end_color="F5F3FF", fill_type="solid"
+        )
         header_font = Font(name="Calibri", bold=True, color="FFFFFF", size=11)
         title_font = Font(name="Calibri", bold=True, color="2D1B69", size=14)
         normal_font = Font(name="Calibri", size=10)
@@ -384,21 +444,20 @@ class StudentExportView(View):
             bottom=Side(style="thin", color="E8E4F5"),
         )
 
-        # Title
         ws.merge_cells("A1:L1")
         ws["A1"] = school.name
         ws["A1"].font = title_font
         ws["A1"].alignment = center
         ws.row_dimensions[1].height = 28
 
-        # Subtitle
         ws.merge_cells("A2:L2")
         ws["A2"] = f"Student Export Report — Generated on {datetime.date.today().strftime('%d %B %Y')}"
-        ws["A2"].font = Font(name="Calibri", color="6B7280", size=10, italic=True)
+        ws["A2"].font = Font(
+            name="Calibri", color="6B7280", size=10, italic=True
+        )
         ws["A2"].alignment = center
         ws.row_dimensions[2].height = 18
 
-        # Filter summary
         q = request.GET.get('q', '')
         status = request.GET.get('status', '')
         grade = request.GET.get('grade', '')
@@ -420,7 +479,6 @@ class StudentExportView(View):
         ws.row_dimensions[3].height = 14
         ws.row_dimensions[4].height = 6
 
-        # Column headers
         columns = [
             ("Student ID", 14), ("First Name", 16), ("Last Name", 16),
             ("Middle Name", 16), ("Gender", 10), ("Grade", 14),
@@ -433,10 +491,11 @@ class StudentExportView(View):
             cell.fill = header_fill
             cell.alignment = center
             cell.border = thin_border
-            ws.column_dimensions[openpyxl.utils.get_column_letter(col_idx)].width = col_width
+            ws.column_dimensions[
+                openpyxl.utils.get_column_letter(col_idx)
+            ].width = col_width
         ws.row_dimensions[5].height = 22
 
-        # Data
         qs = Student.objects.select_related(
             'grade', 'stream', 'academic_year'
         ).order_by('grade__order', 'last_name', 'first_name')
@@ -479,19 +538,18 @@ class StudentExportView(View):
                 cell.fill = row_fill
             ws.row_dimensions[row_idx].height = 18
 
-        # Footer
         total_rows = qs.count()
         footer_row = 6 + total_rows
         ws.merge_cells(f"A{footer_row}:L{footer_row}")
         ws[f"A{footer_row}"] = f"Total: {total_rows} student(s)"
-        ws[f"A{footer_row}"].font = Font(name="Calibri", bold=True, color="2D1B69", size=10)
+        ws[f"A{footer_row}"].font = Font(
+            name="Calibri", bold=True, color="2D1B69", size=10
+        )
         ws[f"A{footer_row}"].fill = subheader_fill
         ws[f"A{footer_row}"].alignment = left
         ws.row_dimensions[footer_row].height = 20
-
         ws.freeze_panes = "A6"
 
-        # Response
         buffer = io.BytesIO()
         wb.save(buffer)
         buffer.seek(0)
@@ -503,3 +561,15 @@ class StudentExportView(View):
         )
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+
+@method_decorator(login_required, name='dispatch')
+class CredentialsView(View):
+    def get(self, request):
+        credentials = request.session.pop('new_credentials', None)
+        if not credentials:
+            return redirect('students:list')
+        return render(request, 'students/credentials.html', {
+            'credentials': credentials,
+            'page_title': 'Account Created',
+        })

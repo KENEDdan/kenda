@@ -12,6 +12,8 @@ urlpatterns = [
     path('students/', include('apps.students.urls', namespace='students')),
     path('school/', include('apps.school.urls', namespace='school')),
     path('', include('apps.public.urls', namespace='public')),
+    path('teachers/', include('apps.teachers.urls', namespace='teachers')),
+    path('academics/', include('apps.academics.urls', namespace='academics')),
 ]
 
 if settings.DEBUG:
@@ -20,3 +22,5 @@ if settings.DEBUG:
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls))
     ] + urlpatterns
+
+    

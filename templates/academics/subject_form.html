@@ -1,0 +1,93 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Academics</div>
+<a href="{% url 'academics:class_list' %}" class="kenda-nav-link">
+    <i class="bi bi-journal-check"></i> Classes
+</a>
+<a href="{% url 'academics:subject_list' %}" class="kenda-nav-link active">
+    <i class="bi bi-book-fill"></i> Subjects
+</a>
+<a href="{% url 'academics:term_list' %}" class="kenda-nav-link">
+    <i class="bi bi-calendar3"></i> Terms
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            {{ page_title }}
+        </h5>
+    </div>
+    <a href="{% url 'academics:subject_list' %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="kenda-card">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold small">
+                            Subject Name <span class="text-danger">*</span>
+                        </label>
+                        {{ form.name }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold small">
+                            Subject Code <span class="text-danger">*</span>
+                        </label>
+                        {{ form.code }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">Type</label>
+                        {{ form.subject_type }}
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check mb-2">
+                            {{ form.is_active }}
+                            <label class="form-check-label fw-semibold small">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Description
+                        </label>
+                        {{ form.description }}
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="alert alert-danger rounded-3 mt-3 small">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Please fix the errors above.
+                </div>
+                {% endif %}
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-kenda px-5 fw-bold">
+                        <i class="bi bi-check-circle me-2"></i>
+                        {% if is_edit %}Save Changes{% else %}Add Subject{% endif %}
+                    </button>
+                    <a href="{% url 'academics:subject_list' %}"
+                       class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

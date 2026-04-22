@@ -1,0 +1,235 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Teachers</div>
+<a href="{% url 'teachers:list' %}" class="kenda-nav-link active">
+    <i class="bi bi-person-workspace"></i> All Teachers
+</a>
+<a href="{% url 'teachers:add' %}" class="kenda-nav-link">
+    <i class="bi bi-person-plus-fill"></i> Add Teacher
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        {% if teacher.photo %}
+        <img src="{{ teacher.photo.url }}" class="kenda-profile-photo" alt="">
+        {% else %}
+        <div class="kenda-profile-avatar">
+            {{ teacher.first_name|first }}{{ teacher.last_name|first }}
+        </div>
+        {% endif %}
+        <div>
+            <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+                {{ teacher.get_full_name }}
+            </h5>
+            <div class="d-flex align-items-center gap-2">
+                <span class="kenda-id-badge">{{ teacher.teacher_id }}</span>
+                <span class="badge bg-{{ teacher.status_badge }} rounded-pill">
+                    {{ teacher.get_status_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'teachers:edit' teacher.pk %}"
+           class="btn btn-kenda btn-sm px-4">
+            <i class="bi bi-pencil me-1"></i> Edit
+        </a>
+        <a href="{% url 'teachers:list' %}"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+
+        <!-- Personal Info -->
+        <div class="kenda-card mb-4">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">
+                    <i class="bi bi-person-fill me-2"
+                       style="color:var(--kenda-violet);"></i>
+                    Personal Information
+                </span>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Full Name</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.get_full_name }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Gender</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.get_gender_display }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Nationality</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.nationality|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Phone</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.phone|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Email</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.email|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Date of Birth</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.date_of_birth|date:"M d, Y"|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="kenda-detail-label">Address</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.address|default:"—" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employment -->
+        <div class="kenda-card mb-4">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">
+                    <i class="bi bi-briefcase-fill me-2"
+                       style="color:var(--kenda-violet);"></i>
+                    Employment Details
+                </span>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Department</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.department|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Employment Type</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.get_employment_type_display }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="kenda-detail-label">Joined</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.join_date|date:"M d, Y" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="kenda-detail-label">Qualification</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.qualification|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="kenda-detail-label">Specialization</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.specialization|default:"—" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="kenda-card">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">
+                    <i class="bi bi-telephone-fill me-2"
+                       style="color:var(--kenda-violet);"></i>
+                    Emergency Contact
+                </span>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="kenda-detail-label">Name</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.emergency_contact_name|default:"—" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="kenda-detail-label">Phone</div>
+                    <div class="kenda-detail-value">
+                        {{ teacher.emergency_contact_phone|default:"—" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+        <div class="kenda-card mb-4">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">Actions</span>
+            </div>
+            <div class="d-flex flex-column gap-2">
+                <a href="{% url 'teachers:edit' teacher.pk %}"
+                   class="kenda-action-btn">
+                    <i class="bi bi-pencil"></i> Edit Profile
+                </a>
+                <a href="#" class="kenda-action-btn">
+                    <i class="bi bi-journal-check"></i> View Classes
+                </a>
+                <a href="#" class="kenda-action-btn">
+                    <i class="bi bi-calendar3"></i> Timetable
+                </a>
+                <a href="{% url 'teachers:id_card' teacher.pk %}" class="kenda-action-btn">
+                    <i class="bi bi-credit-card"></i> Print ID Card
+                </a>
+            </div>
+
+            <hr class="my-3">
+
+            <div class="kenda-card-title mb-2" style="font-size:0.8rem;">
+                Change Status
+            </div>
+            <form method="POST" action="{% url 'teachers:status' teacher.pk %}">
+                {% csrf_token %}
+                <div class="d-flex gap-2">
+                    <select name="status" class="form-select form-select-sm kenda-input">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}"
+                            {% if teacher.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit"
+                            class="btn btn-sm btn-kenda px-3 flex-shrink-0">
+                        Save
+                    </button>
+                </div>
+            </form>
+
+            <hr class="my-3">
+
+            <a href="{% url 'teachers:delete' teacher.pk %}"
+               class="kenda-action-btn"
+               style="color:#EF4444;border-color:#FEE2E2;">
+                <i class="bi bi-trash3" style="color:#EF4444;"></i>
+                Remove Teacher
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

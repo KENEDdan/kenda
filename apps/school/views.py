@@ -7,12 +7,14 @@ from .models import SchoolProfile
 from .forms import SchoolProfileForm
 
 
+from django.urls import reverse_lazy
+
 @method_decorator(login_required, name='dispatch')
 class SchoolSettingsView(UpdateView):
     model = SchoolProfile
     form_class = SchoolProfileForm
     template_name = 'school/settings.html'
-    success_url = reverse_lazy('school:settings')
+    success_url = reverse_lazy('dashboard:admin')  # ← change this line
 
     def get_object(self):
         return SchoolProfile.get()

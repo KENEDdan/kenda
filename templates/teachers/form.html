@@ -1,0 +1,169 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Teachers</div>
+<a href="{% url 'teachers:list' %}" class="kenda-nav-link">
+    <i class="bi bi-person-workspace"></i> All Teachers
+</a>
+<a href="{% url 'teachers:add' %}" class="kenda-nav-link active">
+    <i class="bi bi-person-plus-fill"></i> Add Teacher
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            {% if is_edit %}Edit Teacher{% else %}Add New Teacher{% endif %}
+        </h5>
+        <p class="text-muted small mb-0">
+            {% if is_edit %}Update teacher information
+            {% else %}Add a new teacher to the system{% endif %}
+        </p>
+    </div>
+    <a href="{% url 'teachers:list' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Personal Information -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-person-fill me-2"
+                   style="color:var(--kenda-violet);"></i>
+                Personal Information
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">
+                    First Name <span class="text-danger">*</span>
+                </label>
+                {{ form.first_name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Middle Name</label>
+                {{ form.middle_name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">
+                    Last Name <span class="text-danger">*</span>
+                </label>
+                {{ form.last_name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Gender</label>
+                {{ form.gender }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Date of Birth</label>
+                {{ form.date_of_birth }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Nationality</label>
+                {{ form.nationality }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Phone</label>
+                {{ form.phone }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Photo</label>
+                {{ form.photo }}
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold small">Address</label>
+                {{ form.address }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Employment -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-briefcase-fill me-2"
+                   style="color:var(--kenda-violet);"></i>
+                Employment Details
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Department</label>
+                {{ form.department }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Employment Type</label>
+                {{ form.employment_type }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold small">Qualification</label>
+                {{ form.qualification }}
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold small">Specialization</label>
+                {{ form.specialization }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contact -->
+    <div class="kenda-card mb-4">
+        <div class="kenda-card-header mb-3">
+            <span class="kenda-card-title">
+                <i class="bi bi-telephone-fill me-2"
+                   style="color:var(--kenda-violet);"></i>
+                Emergency Contact
+            </span>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Contact Name</label>
+                {{ form.emergency_contact_name }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold small">Contact Phone</label>
+                {{ form.emergency_contact_phone }}
+            </div>
+        </div>
+    </div>
+
+    {% if form.errors %}
+    <div class="alert alert-danger rounded-3 mb-4 small">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Please fix the errors before submitting.
+        <ul class="mb-0 mt-2">
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <li><strong>{{ field }}:</strong> {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-kenda px-5 py-2 fw-bold">
+            <i class="bi bi-check-circle me-2"></i>
+            {% if is_edit %}Save Changes{% else %}Add Teacher{% endif %}
+        </button>
+        <a href="{% url 'teachers:list' %}"
+           class="btn btn-outline-secondary px-4 py-2">
+            Cancel
+        </a>
+    </div>
+</form>
+
+{% endblock %}
