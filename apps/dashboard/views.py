@@ -30,6 +30,11 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
         ctx = super().get_context_data(**kwargs)
         from apps.students.models import Student
         from apps.teachers.models import Teacher
+        from apps.fees.models import Invoice
+        from django.db.models import Sum
+        total_collected = Invoice.objects.aggregate(
+             t=Sum('amount_paid')
+             )['t'] or 0
         ctx['page_title'] = 'Admin Dashboard'
         ctx['stats'] = [
             {
@@ -46,7 +51,7 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
             },
             {
                 'label': 'Fees Collected',
-                'value': '$0',
+                'value': f'${total_collected:,.0f}',
                 'icon': 'bi-cash-stack',
                 'color': 'kenda-stat-gold',
             },

@@ -180,13 +180,13 @@
     <i class="bi bi-credit-card"></i> Print ID Card
 </a>
 <a href="#" class="kenda-action-btn">
-    <i class="bi bi-cash"></i> View Fees
-</a>
-<a href="#" class="kenda-action-btn">
     <i class="bi bi-graph-up"></i> View Grades
 </a>
 <a href="{% url 'attendance:student' student.pk %}" class="kenda-action-btn">
     <i class="bi bi-calendar-check"></i> View Attendance
+</a>
+<a href="{% url 'fees:student_fees' student.pk %}" class="kenda-action-btn">
+    <i class="bi bi-cash"></i> View Fees
 </a>
     </div>
 

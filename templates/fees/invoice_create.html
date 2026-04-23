@@ -1,0 +1,88 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Finance</div>
+<a href="{% url 'fees:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Fee Dashboard
+</a>
+<a href="{% url 'fees:invoices' %}" class="kenda-nav-link">
+    <i class="bi bi-receipt"></i> Invoices
+</a>
+<a href="{% url 'fees:invoice_create' %}" class="kenda-nav-link active">
+    <i class="bi bi-plus-circle"></i> Create Invoice
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0" style="color:var(--kenda-indigo);">
+        Create Invoice
+    </h5>
+    <a href="{% url 'fees:invoices' %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="kenda-card">
+            <div class="alert alert-info small mb-4">
+                <i class="bi bi-info-circle me-1"></i>
+                The invoice will be automatically populated from the fee
+                structures configured for the student's grade and academic year.
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Student <span class="text-danger">*</span>
+                        </label>
+                        {{ form.student }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Academic Year <span class="text-danger">*</span>
+                        </label>
+                        {{ form.academic_year }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Term
+                        </label>
+                        {{ form.term }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Due Date
+                        </label>
+                        {{ form.due_date }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Notes
+                        </label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+                {% if form.errors %}
+                <div class="alert alert-danger mt-3 small">
+                    Please fix the errors above.
+                </div>
+                {% endif %}
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-kenda px-5 fw-bold">
+                        <i class="bi bi-receipt me-2"></i>Generate Invoice
+                    </button>
+                    <a href="{% url 'fees:invoices' %}"
+                       class="btn btn-outline-secondary px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

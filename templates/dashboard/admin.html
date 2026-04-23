@@ -36,8 +36,14 @@
     <i class="bi bi-bar-chart-fill"></i> Attendance Report
 </a>
 <div class="kenda-nav-section">Finance</div>
-<a href="#" class="kenda-nav-link">
+<a href="{% url 'fees:dashboard' %}" class="kenda-nav-link">
     <i class="bi bi-cash-stack"></i> Fee Management
+</a>
+<a href="{% url 'fees:invoices' %}" class="kenda-nav-link">
+    <i class="bi bi-receipt"></i> Invoices
+</a>
+<a href="{% url 'fees:invoice_create' %}" class="kenda-nav-link">
+    <i class="bi bi-plus-circle"></i> Create Invoice
 </a>
 <div class="kenda-nav-section">System</div>
 <a href="{% url 'school:settings' %}" class="kenda-nav-link">

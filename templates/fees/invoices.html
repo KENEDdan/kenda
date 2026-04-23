@@ -1,0 +1,161 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Finance</div>
+<a href="{% url 'fees:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Fee Dashboard
+</a>
+<a href="{% url 'fees:invoices' %}" class="kenda-nav-link active">
+    <i class="bi bi-receipt"></i> Invoices
+</a>
+<a href="{% url 'fees:invoice_create' %}" class="kenda-nav-link">
+    <i class="bi bi-plus-circle"></i> Create Invoice
+</a>
+<a href="{% url 'fees:structures' %}" class="kenda-nav-link">
+    <i class="bi bi-table"></i> Fee Structures
+</a>
+<a href="{% url 'fees:categories' %}" class="kenda-nav-link">
+    <i class="bi bi-tags"></i> Fee Categories
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">Invoices</h5>
+    </div>
+    <a href="{% url 'fees:invoice_create' %}" class="btn btn-kenda px-4">
+        <i class="bi bi-plus-circle me-2"></i>Create Invoice
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="kenda-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label fw-semibold small">Search</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="q" value="{{ request.GET.q }}"
+                       class="form-control kenda-input border-start-0 ps-0"
+                       placeholder="Invoice number or student name...">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small">Status</label>
+            <select name="status" class="form-select kenda-input">
+                <option value="">All</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}"
+                    {% if request.GET.status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-kenda w-100">
+                <i class="bi bi-funnel me-1"></i> Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="kenda-card p-0">
+    {% if invoices %}
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Student</th>
+                    <th>Total</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td>
+                        <span class="kenda-id-badge">
+                            {{ invoice.invoice_number }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="fw-semibold small">
+                            {{ invoice.student.get_full_name }}
+                        </div>
+                        <div class="text-muted" style="font-size:0.72rem;">
+                            {{ invoice.student.student_id }}
+                        </div>
+                    </td>
+                    <td class="small fw-semibold">
+                        ${{ invoice.total_amount|floatformat:2 }}
+                    </td>
+                    <td class="small text-success">
+                        ${{ invoice.amount_paid|floatformat:2 }}
+                    </td>
+                    <td class="small {% if invoice.balance > 0 %}text-danger fw-bold{% endif %}">
+                        ${{ invoice.balance|floatformat:2 }}
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ invoice.status_badge }} rounded-pill">
+                            {{ invoice.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="small text-muted">
+                        {{ invoice.created_at|date:"M d, Y" }}
+                    </td>
+                    <td>
+                        <a href="{% url 'fees:invoice_detail' invoice.pk %}"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if is_paginated %}
+    <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+        <small class="text-muted">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </small>
+        <div class="d-flex gap-1">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="kenda-empty-state">
+        <i class="bi bi-receipt"></i>
+        <p>No invoices found.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

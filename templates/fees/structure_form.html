@@ -1,0 +1,88 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Finance</div>
+<a href="{% url 'fees:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Fee Dashboard
+</a>
+<a href="{% url 'fees:structures' %}" class="kenda-nav-link active">
+    <i class="bi bi-table"></i> Fee Structures
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0" style="color:var(--kenda-indigo);">
+        {{ page_title }}
+    </h5>
+    <a href="{% url 'fees:structures' %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+</div>
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="kenda-card">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Fee Category <span class="text-danger">*</span>
+                        </label>
+                        {{ form.category }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Grade <span class="text-danger">*</span>
+                        </label>
+                        {{ form.grade }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Academic Year <span class="text-danger">*</span>
+                        </label>
+                        {{ form.academic_year }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Term (optional)
+                        </label>
+                        {{ form.term }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small">
+                            Amount <span class="text-danger">*</span>
+                        </label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check mb-2">
+                            {{ form.is_active }}
+                            <label class="form-check-label fw-semibold small">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {% if form.errors %}
+                <div class="alert alert-danger rounded-3 mt-3 small">
+                    Please fix the errors above.
+                </div>
+                {% endif %}
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-kenda px-5 fw-bold">
+                        <i class="bi bi-check-circle me-2"></i>
+                        {% if is_edit %}Save{% else %}Add Structure{% endif %}
+                    </button>
+                    <a href="{% url 'fees:structures' %}"
+                       class="btn btn-outline-secondary px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Finance</div>
+<a href="{% url 'fees:dashboard' %}" class="kenda-nav-link active">
+    <i class="bi bi-cash-stack"></i> Fee Dashboard
+</a>
+<a href="{% url 'fees:invoices' %}" class="kenda-nav-link">
+    <i class="bi bi-receipt"></i> Invoices
+</a>
+<a href="{% url 'fees:invoice_create' %}" class="kenda-nav-link">
+    <i class="bi bi-plus-circle"></i> Create Invoice
+</a>
+<a href="{% url 'fees:structures' %}" class="kenda-nav-link">
+    <i class="bi bi-table"></i> Fee Structures
+</a>
+<a href="{% url 'fees:categories' %}" class="kenda-nav-link">
+    <i class="bi bi-tags"></i> Fee Categories
+</a>
+<div class="kenda-nav-section">Academics</div>
+<a href="{% url 'academics:class_list' %}" class="kenda-nav-link">
+    <i class="bi bi-journal-check"></i> Classes
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="{% url 'school:settings' %}" class="kenda-nav-link">
+    <i class="bi bi-building"></i> School Settings
+</a>
+<a href="{% url 'admin:index' %}" class="kenda-nav-link">
+    <i class="bi bi-gear-fill"></i> Django Admin
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Fee Management
+        </h5>
+        <p class="text-muted small mb-0">
+            Financial overview for your school
+        </p>
+    </div>
+    <a href="{% url 'fees:invoice_create' %}" class="btn btn-kenda px-4">
+        <i class="bi bi-plus-circle me-2"></i>Create Invoice
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="kenda-stat-card kenda-stat-purple">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-receipt"></i>
+            </div>
+            <div class="kenda-stat-value">
+                ${{ total_invoiced|floatformat:2 }}
+            </div>
+            <div class="kenda-stat-label">Total Invoiced</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kenda-stat-card kenda-stat-green">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="kenda-stat-value">
+                ${{ total_collected|floatformat:2 }}
+            </div>
+            <div class="kenda-stat-label">Total Collected</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kenda-stat-card kenda-stat-gold">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <div class="kenda-stat-value">
+                ${{ total_outstanding|floatformat:2 }}
+            </div>
+            <div class="kenda-stat-label">Outstanding</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Recent Invoices -->
+    <div class="col-lg-7">
+        <div class="kenda-card">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">Recent Invoices</span>
+                <a href="{% url 'fees:invoices' %}"
+                   class="small kenda-link">View all</a>
+            </div>
+            {% if recent_invoices %}
+            <div class="table-responsive">
+                <table class="table kenda-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Student</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in recent_invoices %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'fees:invoice_detail' invoice.pk %}"
+                                   class="kenda-link fw-semibold small">
+                                    {{ invoice.invoice_number }}
+                                </a>
+                            </td>
+                            <td class="small">
+                                {{ invoice.student.get_full_name }}
+                            </td>
+                            <td class="small fw-semibold">
+                                ${{ invoice.total_amount|floatformat:2 }}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ invoice.status_badge }} rounded-pill">
+                                    {{ invoice.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="kenda-empty-state">
+                <i class="bi bi-receipt"></i>
+                <p>No invoices yet.<br>
+                <a href="{% url 'fees:invoice_create' %}" class="kenda-link">
+                    Create your first invoice →
+                </a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Arrears -->
+    <div class="col-lg-5">
+        <div class="kenda-card">
+            <div class="kenda-card-header mb-3">
+                <span class="kenda-card-title">
+                    <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i>
+                    Outstanding Balances
+                </span>
+            </div>
+            {% if arrears %}
+            <div class="d-flex flex-column gap-2">
+                {% for invoice in arrears %}
+                <div class="d-flex justify-content-between align-items-center
+                            p-2 rounded" style="background:#FFF5F5;">
+                    <div>
+                        <div class="fw-semibold small">
+                            {{ invoice.student.get_full_name }}
+                        </div>
+                        <div class="text-muted" style="font-size:0.72rem;">
+                            {{ invoice.invoice_number }}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold text-danger small">
+                            ${{ invoice.balance|floatformat:2 }}
+                        </div>
+                        <a href="{% url 'fees:invoice_detail' invoice.pk %}"
+                           class="kenda-link" style="font-size:0.72rem;">
+                            View
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="kenda-empty-state">
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <p>No outstanding balances!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
