@@ -45,6 +45,23 @@
 <a href="{% url 'fees:invoice_create' %}" class="kenda-nav-link">
     <i class="bi bi-plus-circle"></i> Create Invoice
 </a>
+<div class="kenda-nav-section">Communications</div>
+<a href="{% url 'communications:list' %}" class="kenda-nav-link">
+    <i class="bi bi-megaphone-fill"></i> Announcements
+</a>
+<a href="{% url 'communications:create' %}" class="kenda-nav-link">
+    <i class="bi bi-plus-circle"></i> New Announcement
+</a>
+<div class="kenda-nav-section">Reports</div>
+<a href="{% url 'reports:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-bar-chart-fill"></i> Analytics
+</a>
+<a href="{% url 'reports:students' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> Student Report
+</a>
+<a href="{% url 'reports:fees' %}" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Financial Report
+</a>
 <div class="kenda-nav-section">System</div>
 <a href="{% url 'school:settings' %}" class="kenda-nav-link">
     <i class="bi bi-building"></i> School Settings
@@ -58,6 +75,7 @@
 <a href="{% url 'admin:index' %}" class="kenda-nav-link">
     <i class="bi bi-gear-fill"></i> Django Admin
 </a>
+
 {% endblock %}
 
 {% block dashboard_content %}

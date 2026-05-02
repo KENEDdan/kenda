@@ -1,0 +1,214 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Reports</div>
+<a href="{% url 'reports:dashboard' %}" class="kenda-nav-link active">
+    <i class="bi bi-bar-chart-fill"></i> Analytics Overview
+</a>
+<a href="{% url 'reports:students' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> Student Report
+</a>
+<a href="{% url 'reports:attendance' %}" class="kenda-nav-link">
+    <i class="bi bi-calendar-check-fill"></i> Attendance Report
+</a>
+<a href="{% url 'reports:fees' %}" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Financial Report
+</a>
+<div class="kenda-nav-section">System</div>
+<a href="{% url 'school:settings' %}" class="kenda-nav-link">
+    <i class="bi bi-building"></i> School Settings
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Reports & Analytics
+        </h5>
+        <p class="text-muted small mb-0">School performance overview</p>
+    </div>
+    <a href="{% url 'reports:export_students' %}"
+       class="btn btn-outline-secondary btn-sm px-4">
+        <i class="bi bi-file-earmark-excel me-1"></i> Export Summary
+    </a>
+</div>
+
+<!-- Key metrics -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-purple">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="kenda-stat-value">{{ active_students }}</div>
+            <div class="kenda-stat-label">Active Students</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-blue">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-person-workspace"></i>
+            </div>
+            <div class="kenda-stat-value">{{ active_teachers }}</div>
+            <div class="kenda-stat-label">Active Teachers</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-green">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="kenda-stat-value">{{ attendance_rate }}%</div>
+            <div class="kenda-stat-label">Attendance Rate</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-gold">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="kenda-stat-value">{{ collection_rate }}%</div>
+            <div class="kenda-stat-label">Fee Collection Rate</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Gender split -->
+    <div class="col-md-4">
+        <div class="kenda-card h-100">
+            <div class="kenda-card-title mb-4">Gender Distribution</div>
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-semibold">Male</span>
+                        <span class="small text-muted">{{ male_students }}</span>
+                    </div>
+                    <div class="progress" style="height:8px;border-radius:4px;">
+                        <div class="progress-bar"
+                             style="width:{% if active_students > 0 %}{% widthratio male_students active_students 100 %}{% else %}0{% endif %}%;background:var(--kenda-violet);">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-semibold">Female</span>
+                        <span class="small text-muted">{{ female_students }}</span>
+                    </div>
+                    <div class="progress" style="height:8px;border-radius:4px;">
+                        <div class="progress-bar"
+                             style="width:{% if active_students > 0 %}{% widthratio female_students active_students 100 %}{% else %}0{% endif %}%;background:var(--kenda-gold);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 pt-3" style="border-top:1px solid #EDE9FE;">
+                <div class="d-flex justify-content-between">
+                    <span class="small text-muted">Total Active</span>
+                    <span class="fw-bold small">{{ active_students }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students by grade -->
+    <div class="col-md-8">
+        <div class="kenda-card">
+            <div class="kenda-card-title mb-3">Students by Grade</div>
+            {% if students_by_grade %}
+            <div class="table-responsive">
+                <table class="table kenda-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Grade</th>
+                            <th>Active Students</th>
+                            <th style="width:40%;">Distribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in students_by_grade %}
+                        <tr>
+                            <td class="fw-semibold small">
+                                {{ grade.name }}
+                            </td>
+                            <td class="small">{{ grade.count }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1"
+                                         style="height:6px;border-radius:3px;">
+                                        <div class="progress-bar"
+                                             style="width:{% if active_students > 0 %}{% widthratio grade.count active_students 100 %}{% else %}0{% endif %}%;background:var(--kenda-violet);">
+                                        </div>
+                                    </div>
+                                    <span class="small text-muted"
+                                          style="width:35px;">
+                                        {% if active_students > 0 %}
+                                        {% widthratio grade.count active_students 100 %}%
+                                        {% else %}0%{% endif %}
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="kenda-empty-state">
+                <i class="bi bi-bar-chart"></i>
+                <p>No grade data available yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Quick links to detailed reports -->
+<div class="row g-4 mt-2">
+    <div class="col-md-4">
+        <a href="{% url 'reports:students' %}"
+           class="kenda-report-link-card">
+            <i class="bi bi-people-fill"></i>
+            <div>
+                <div class="fw-bold">Student Report</div>
+                <div class="small text-muted">
+                    Enrolment by grade, gender, status
+                </div>
+            </div>
+            <i class="bi bi-arrow-right ms-auto"></i>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'reports:attendance' %}"
+           class="kenda-report-link-card">
+            <i class="bi bi-calendar-check-fill"></i>
+            <div>
+                <div class="fw-bold">Attendance Report</div>
+                <div class="small text-muted">
+                    Rates by class, absences summary
+                </div>
+            </div>
+            <i class="bi bi-arrow-right ms-auto"></i>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'reports:fees' %}"
+           class="kenda-report-link-card">
+            <i class="bi bi-cash-stack"></i>
+            <div>
+                <div class="fw-bold">Financial Report</div>
+                <div class="small text-muted">
+                    Collections, outstanding, by grade
+                </div>
+            </div>
+            <i class="bi bi-arrow-right ms-auto"></i>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

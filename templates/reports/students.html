@@ -1,0 +1,115 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Reports</div>
+<a href="{% url 'reports:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-bar-chart-fill"></i> Analytics Overview
+</a>
+<a href="{% url 'reports:students' %}" class="kenda-nav-link active">
+    <i class="bi bi-people-fill"></i> Student Report
+</a>
+<a href="{% url 'reports:attendance' %}" class="kenda-nav-link">
+    <i class="bi bi-calendar-check-fill"></i> Attendance Report
+</a>
+<a href="{% url 'reports:fees' %}" class="kenda-nav-link">
+    <i class="bi bi-cash-stack"></i> Financial Report
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Student Report
+        </h5>
+        <p class="text-muted small mb-0">
+            {{ total_students }} total students
+        </p>
+    </div>
+    <a href="{% url 'reports:export_students' %}"
+       class="btn btn-outline-secondary btn-sm px-4">
+        <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+    </a>
+</div>
+
+<!-- Summary -->
+<div class="row g-4 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-purple">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="kenda-stat-value">{{ total_students }}</div>
+            <div class="kenda-stat-label">Total Enrolled</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-green">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="kenda-stat-value">{{ active }}</div>
+            <div class="kenda-stat-label">Active</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-blue">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <div class="kenda-stat-value">{{ graduated }}</div>
+            <div class="kenda-stat-label">Graduated</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="kenda-stat-card kenda-stat-gold">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <div class="kenda-stat-value">{{ suspended }}</div>
+            <div class="kenda-stat-label">Suspended</div>
+        </div>
+    </div>
+</div>
+
+<!-- By grade table -->
+<div class="kenda-card p-0">
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Grade</th>
+                    <th>Total</th>
+                    <th>Active</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                <tr>
+                    <td class="fw-semibold small">{{ grade.name }}</td>
+                    <td class="small">{{ grade.total }}</td>
+                    <td class="small text-success fw-semibold">
+                        {{ grade.active }}
+                    </td>
+                    <td class="small">{{ grade.male }}</td>
+                    <td class="small">{{ grade.female }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        No grade data available.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

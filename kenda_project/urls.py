@@ -16,6 +16,8 @@ urlpatterns = [
     path('academics/', include('apps.academics.urls', namespace='academics')),
     path('attendance/', include('apps.attendance.urls', namespace='attendance')),
     path('fees/', include('apps.fees.urls', namespace='fees')),
+    path('communications/', include('apps.communications.urls', namespace='communications')),
+    path('reports/', include('apps.reports.urls', namespace='reports')),
 ]
 
 if settings.DEBUG:

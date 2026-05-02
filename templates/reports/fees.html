@@ -1,0 +1,200 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Reports</div>
+<a href="{% url 'reports:dashboard' %}" class="kenda-nav-link">
+    <i class="bi bi-bar-chart-fill"></i> Analytics Overview
+</a>
+<a href="{% url 'reports:students' %}" class="kenda-nav-link">
+    <i class="bi bi-people-fill"></i> Student Report
+</a>
+<a href="{% url 'reports:attendance' %}" class="kenda-nav-link">
+    <i class="bi bi-calendar-check-fill"></i> Attendance Report
+</a>
+<a href="{% url 'reports:fees' %}" class="kenda-nav-link active">
+    <i class="bi bi-cash-stack"></i> Financial Report
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Financial Report
+        </h5>
+    </div>
+</div>
+
+<!-- Summary stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="kenda-stat-card kenda-stat-purple">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-receipt"></i>
+            </div>
+            <div class="kenda-stat-value">
+                ${{ total_invoiced|floatformat:2 }}
+            </div>
+            <div class="kenda-stat-label">Total Invoiced</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kenda-stat-card kenda-stat-green">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="kenda-stat-value">
+                ${{ total_collected|floatformat:2 }}
+            </div>
+            <div class="kenda-stat-label">Collected</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kenda-stat-card kenda-stat-gold">
+            <div class="kenda-stat-icon-wrap">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <div class="kenda-stat-value">
+                ${{ total_outstanding|floatformat:2 }}
+            </div>
+            <div class="kenda-stat-label">Outstanding</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Invoice status breakdown -->
+    <div class="col-md-4">
+        <div class="kenda-card">
+            <div class="kenda-card-title mb-3">Invoice Status</div>
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex justify-content-between align-items-center
+                            p-2 rounded" style="background:#D1FAE5;">
+                    <span class="small fw-semibold text-success">
+                        Fully Paid
+                    </span>
+                    <span class="fw-bold">{{ paid_count }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center
+                            p-2 rounded" style="background:#FEF3C7;">
+                    <span class="small fw-semibold text-warning">
+                        Partially Paid
+                    </span>
+                    <span class="fw-bold">{{ partial_count }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center
+                            p-2 rounded" style="background:#FEE2E2;">
+                    <span class="small fw-semibold text-danger">
+                        Unpaid / Overdue
+                    </span>
+                    <span class="fw-bold">{{ unpaid_count }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grade-wise collection -->
+    <div class="col-md-8">
+        <div class="kenda-card p-0">
+            <div class="kenda-card-title p-3 pb-0">
+                Collection by Grade
+            </div>
+            <div class="table-responsive">
+                <table class="table kenda-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Grade</th>
+                            <th>Invoiced</th>
+                            <th>Collected</th>
+                            <th>Outstanding</th>
+                            <th>Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in grade_stats %}
+                        {% if row.invoiced > 0 %}
+                        <tr>
+                            <td class="fw-semibold small">
+                                {{ row.grade.name }}
+                            </td>
+                            <td class="small">
+                                ${{ row.invoiced|floatformat:2 }}
+                            </td>
+                            <td class="small text-success">
+                                ${{ row.collected|floatformat:2 }}
+                            </td>
+                            <td class="small
+                                {% if row.outstanding > 0 %}text-danger{% endif %}">
+                                ${{ row.outstanding|floatformat:2 }}
+                            </td>
+                            <td>
+                                <span class="fw-bold small
+                                    {% if row.rate >= 80 %}text-success
+                                    {% elif row.rate >= 60 %}text-warning
+                                    {% else %}text-danger{% endif %}">
+                                    {{ row.rate }}%
+                                </span>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No financial data yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if recent_payments %}
+<div class="kenda-card mt-4 p-0">
+    <div class="kenda-card-title p-3 pb-0">Recent Payments</div>
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Receipt</th>
+                    <th>Student</th>
+                    <th>Method</th>
+                    <th>Date</th>
+                    <th class="text-end">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in recent_payments %}
+                <tr>
+                    <td>
+                        <span class="kenda-id-badge">
+                            {{ payment.receipt_number }}
+                        </span>
+                    </td>
+                    <td class="small">
+                        {{ payment.invoice.student.get_full_name }}
+                    </td>
+                    <td class="small">
+                        {{ payment.get_payment_method_display }}
+                    </td>
+                    <td class="small text-muted">
+                        {{ payment.payment_date|date:"M d, Y" }}
+                    </td>
+                    <td class="small fw-bold text-success text-end">
+                        ${{ payment.amount|floatformat:2 }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

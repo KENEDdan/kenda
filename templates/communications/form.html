@@ -1,0 +1,96 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Communications</div>
+<a href="{% url 'communications:list' %}" class="kenda-nav-link">
+    <i class="bi bi-megaphone-fill"></i> Announcements
+</a>
+<a href="{% url 'communications:create' %}" class="kenda-nav-link active">
+    <i class="bi bi-plus-circle"></i> New Announcement
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0" style="color:var(--kenda-indigo);">
+        {{ page_title }}
+    </h5>
+    <a href="{% url 'communications:list' %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="kenda-card">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Title <span class="text-danger">*</span>
+                        </label>
+                        {{ form.title }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold small">
+                            Audience
+                        </label>
+                        {{ form.audience }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold small">
+                            Priority
+                        </label>
+                        {{ form.priority }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold small">
+                            Grade (optional)
+                        </label>
+                        {{ form.grade }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold small">
+                            Message <span class="text-danger">*</span>
+                        </label>
+                        {{ form.body }}
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            {{ form.is_published }}
+                            <label class="form-check-label fw-semibold small">
+                                Publish immediately
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="alert alert-danger rounded-3 mt-3 small">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Please fix the errors above.
+                </div>
+                {% endif %}
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-kenda px-5 fw-bold">
+                        <i class="bi bi-megaphone me-2"></i>
+                        {% if is_edit %}Save Changes{% else %}Publish{% endif %}
+                    </button>
+                    <a href="{% url 'communications:list' %}"
+                       class="btn btn-outline-secondary px-4">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Communications</div>
+<a href="{% url 'communications:list' %}" class="kenda-nav-link">
+    <i class="bi bi-megaphone-fill"></i> Announcements
+</a>
+<a href="{% url 'communications:notifications' %}" class="kenda-nav-link active">
+    <i class="bi bi-bell-fill"></i> Notifications
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Notifications
+        </h5>
+        <p class="text-muted small mb-0">
+            {{ unread_count }} unread
+        </p>
+    </div>
+    {% if unread_count > 0 %}
+    <form method="POST" action="{% url 'communications:mark_all_read' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-secondary btn-sm px-4">
+            <i class="bi bi-check-all me-1"></i> Mark All Read
+        </button>
+    </form>
+    {% endif %}
+</div>
+
+{% if notifications %}
+<div class="d-flex flex-column gap-2">
+    {% for notif in notifications %}
+    <div class="kenda-card {% if not notif.is_read %}kenda-notif-unread{% endif %}">
+        <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex gap-3 align-items-start">
+                <div class="kenda-notif-icon
+                    {% if notif.notification_type == 'fee_reminder' %}bg-warning
+                    {% elif notif.notification_type == 'attendance' %}bg-info
+                    {% elif notif.notification_type == 'result' %}bg-success
+                    {% else %}bg-primary{% endif %}">
+                    <i class="bi
+                        {% if notif.notification_type == 'fee_reminder' %}bi-cash
+                        {% elif notif.notification_type == 'attendance' %}bi-calendar-check
+                        {% elif notif.notification_type == 'result' %}bi-graph-up
+                        {% else %}bi-bell{% endif %}"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold small {% if not notif.is_read %}text-dark{% else %}text-muted{% endif %}">
+                        {{ notif.title }}
+                    </div>
+                    <div class="text-muted small mt-1">
+                        {{ notif.message }}
+                    </div>
+                    <div class="text-muted mt-1" style="font-size:0.7rem;">
+                        {{ notif.created_at|date:"M d, Y H:i" }}
+                    </div>
+                </div>
+            </div>
+            {% if not notif.is_read %}
+            <form method="POST"
+                  action="{% url 'communications:mark_read' notif.pk %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-sm btn-outline-secondary flex-shrink-0">
+                    <i class="bi bi-check"></i>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="kenda-card">
+    <div class="kenda-empty-state">
+        <i class="bi bi-bell-slash"></i>
+        <p>No notifications yet.</p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
