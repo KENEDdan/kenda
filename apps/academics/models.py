@@ -132,3 +132,100 @@ class Term(models.Model):
         if self.is_current:
             Term.objects.exclude(pk=self.pk).update(is_current=False)
         super().save(*args, **kwargs)
+
+class AssessmentType(models.Model):
+    name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=20)
+    weight = models.DecimalField(
+        max_digits=5, decimal_places=2, default=100,
+        help_text='Percentage weight of this assessment'
+    )
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.name} ({self.weight}%)"
+
+
+class GradeEntry(models.Model):
+    """
+    A single mark entered for one student,
+    one subject, one assessment type, one term.
+    """
+    student = models.ForeignKey(
+        'students.Student',
+        on_delete=models.CASCADE,
+        related_name='grade_entries'
+    )
+    subject_assignment = models.ForeignKey(
+        SubjectAssignment,
+        on_delete=models.CASCADE,
+        related_name='grade_entries'
+    )
+    assessment_type = models.ForeignKey(
+        AssessmentType,
+        on_delete=models.PROTECT,
+        related_name='grade_entries'
+    )
+    term = models.ForeignKey(
+        Term,
+        on_delete=models.PROTECT,
+        related_name='grade_entries'
+    )
+    marks = models.DecimalField(
+        max_digits=6, decimal_places=2,
+        help_text='Marks scored'
+    )
+    max_marks = models.DecimalField(
+        max_digits=6, decimal_places=2, default=100,
+        help_text='Maximum possible marks'
+    )
+    remarks = models.CharField(max_length=200, blank=True)
+    entered_by = models.ForeignKey(
+        'accounts.CustomUser',
+        on_delete=models.SET_NULL,
+        null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['student__last_name', 'assessment_type__order']
+        unique_together = [
+            'student', 'subject_assignment',
+            'assessment_type', 'term'
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.student.get_full_name()} — "
+            f"{self.subject_assignment.subject.name} — "
+            f"{self.assessment_type.name}: {self.marks}/{self.max_marks}"
+        )
+
+    @property
+    def percentage(self):
+        if self.max_marks > 0:
+            return round(float(self.marks) / float(self.max_marks) * 100, 1)
+        return 0
+
+    @property
+    def letter_grade(self):
+        pct = self.percentage
+        if pct >= 80: return 'A'
+        elif pct >= 70: return 'B'
+        elif pct >= 60: return 'C'
+        elif pct >= 50: return 'D'
+        else: return 'F'
+
+    @property
+    def grade_badge(self):
+        grade = self.letter_grade
+        colors = {
+            'A': 'success', 'B': 'primary',
+            'C': 'info', 'D': 'warning', 'F': 'danger'
+        }
+        return colors.get(grade, 'secondary')

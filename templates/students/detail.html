@@ -179,7 +179,7 @@
 <a href="{% url 'students:id_card' student.pk %}" class="kenda-action-btn">
     <i class="bi bi-credit-card"></i> Print ID Card
 </a>
-<a href="#" class="kenda-action-btn">
+<a href="{% url 'academics:student_grades' student.pk %}" class="kenda-action-btn">
     <i class="bi bi-graph-up"></i> View Grades
 </a>
 <a href="{% url 'attendance:student' student.pk %}" class="kenda-action-btn">

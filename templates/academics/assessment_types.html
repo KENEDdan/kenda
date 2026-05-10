@@ -1,0 +1,80 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Academics</div>
+<a href="{% url 'academics:gradebook' %}" class="kenda-nav-link">
+    <i class="bi bi-clipboard-data-fill"></i> Grade Book
+</a>
+<a href="{% url 'academics:assessment_types' %}" class="kenda-nav-link active">
+    <i class="bi bi-list-check"></i> Assessment Types
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Assessment Types
+        </h5>
+        <p class="text-muted small mb-0">
+            e.g. CAT, Midterm, Final Exam, Project
+        </p>
+    </div>
+    <a href="{% url 'academics:assessment_type_add' %}"
+       class="btn btn-kenda px-4">
+        <i class="bi bi-plus-circle me-2"></i>Add Type
+    </a>
+</div>
+
+<div class="kenda-card p-0">
+    {% if assessment_types %}
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Short Name</th>
+                    <th>Weight</th>
+                    <th>Order</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for at in assessment_types %}
+                <tr>
+                    <td class="fw-semibold small">{{ at.name }}</td>
+                    <td>
+                        <span class="kenda-id-badge">{{ at.short_name }}</span>
+                    </td>
+                    <td class="small">{{ at.weight }}%</td>
+                    <td class="small">{{ at.order }}</td>
+                    <td>
+                        {% if at.is_active %}
+                        <span class="badge bg-success rounded-pill">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary rounded-pill">
+                            Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="kenda-empty-state">
+        <i class="bi bi-list-check"></i>
+        <p>No assessment types yet.<br>
+        <a href="{% url 'academics:assessment_type_add' %}" class="kenda-link">
+            Add your first assessment type →
+        </a></p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

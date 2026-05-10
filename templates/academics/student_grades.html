@@ -1,0 +1,115 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}
+<a href="{% url 'dashboard:admin' %}" class="kenda-nav-link">
+    <i class="bi bi-grid-fill"></i> Overview
+</a>
+<div class="kenda-nav-section">Students</div>
+<a href="{% url 'students:list' %}" class="kenda-nav-link active">
+    <i class="bi bi-people-fill"></i> All Students
+</a>
+<div class="kenda-nav-section">Academics</div>
+<a href="{% url 'academics:gradebook' %}" class="kenda-nav-link">
+    <i class="bi bi-clipboard-data-fill"></i> Grade Book
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="fw-bold mb-1" style="color:var(--kenda-indigo);">
+            Academic Results
+        </h5>
+        <p class="text-muted small mb-0">{{ student.get_full_name }}</p>
+    </div>
+    <a href="{% url 'students:detail' student.pk %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Profile
+    </a>
+</div>
+
+<!-- Term filter -->
+<div class="kenda-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small">Term</label>
+            <select name="term" class="form-select kenda-input">
+                <option value="">All Terms</option>
+                {% for term in terms %}
+                <option value="{{ term.pk }}"
+                    {% if selected_term and selected_term.pk == term.pk %}
+                        selected{% endif %}>
+                    {{ term }}
+                    {% if term.is_current %}(Current){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-kenda w-100">
+                <i class="bi bi-search me-1"></i> Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if subjects_data %}
+{% for subject_name, entries in subjects_data.items %}
+<div class="kenda-card mb-3">
+    <div class="kenda-card-header mb-3">
+        <span class="kenda-card-title">
+            <i class="bi bi-book-fill me-2"
+               style="color:var(--kenda-violet);"></i>
+            {{ subject_name }}
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table class="table kenda-table mb-0">
+            <thead>
+                <tr>
+                    <th>Assessment</th>
+                    <th>Term</th>
+                    <th>Marks</th>
+                    <th>Out of</th>
+                    <th>Percentage</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td class="fw-semibold small">
+                        {{ entry.assessment_type.name }}
+                    </td>
+                    <td class="small text-muted">{{ entry.term }}</td>
+                    <td class="small fw-bold">{{ entry.marks }}</td>
+                    <td class="small text-muted">{{ entry.max_marks }}</td>
+                    <td class="small">{{ entry.percentage }}%</td>
+                    <td>
+                        <span class="badge bg-{{ entry.grade_badge }} rounded-pill">
+                            {{ entry.letter_grade }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="kenda-card">
+    <div class="kenda-empty-state">
+        <i class="bi bi-clipboard-x"></i>
+        <p>No grade records found
+        {% if selected_term %}for {{ selected_term }}{% endif %}.</p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block sidebar_nav %}

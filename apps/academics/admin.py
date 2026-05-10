@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Subject, ClassRoom, SubjectAssignment, Term
+from .models import Subject, ClassRoom, SubjectAssignment, Term, AssessmentType, GradeEntry
 
 
 @admin.register(Subject)
@@ -31,3 +31,23 @@ class SubjectAssignmentAdmin(admin.ModelAdmin):
 class TermAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'start_date', 'end_date', 'is_current')
     list_editable = ('is_current',)
+
+    from .models import AssessmentType, GradeEntry
+
+@admin.register(AssessmentType)
+class AssessmentTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name', 'weight', 'order', 'is_active')
+    list_editable = ('order', 'is_active')
+
+
+@admin.register(GradeEntry)
+class GradeEntryAdmin(admin.ModelAdmin):
+    list_display = (
+        'student', 'subject_assignment', 'assessment_type',
+        'term', 'marks', 'max_marks'
+    )
+    list_filter = ('term', 'assessment_type')
+    search_fields = (
+        'student__first_name', 'student__last_name',
+        'student__student_id'
+    )
